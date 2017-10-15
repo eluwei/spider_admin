@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.junfly.water.mapper.sys.SCityMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.junfly.water.entity.sys.SCity" id="sCityMap">
+        <result property="regionId" column="REGION_ID"/>
+        <result property="parentId" column="PARENT_ID"/>
+        <result property="regionName" column="REGION_NAME"/>
+        <result property="regionType" column="REGION_TYPE"/>
+        <result property="agencyId" column="AGENCY_ID"/>
+        <result property="py" column="PY"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.junfly.water.entity.sys.SCity">
+		select * from s_city where REGION_ID = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.junfly.water.entity.sys.SCity">
+		select * from s_city
+		<where>
+			<if test="parentId != null and parentId != null">
+				and parent_id = #{parentId}
+			</if>
+			and region_type != '5'
+		</where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by REGION_ID desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		<where>
+			<if test="parentId != null and parentId != null">
+				and parent_id = #{parentId}
+			</if>
+			and region_type != '5'
+		</where>
+		select count(*) from s_city 
+	</select>
+	 
+	<insert id="save" parameterType="com.junfly.water.entity.sys.SCity">
+		insert into s_city
+		(
+			`REGION_ID`, 
+			`PARENT_ID`, 
+			`REGION_NAME`, 
+			`REGION_TYPE`, 
+			`AGENCY_ID`, 
+			`PY`
+		)
+		values
+		(
+			#{regionId}, 
+			#{parentId}, 
+			#{regionName}, 
+			#{regionType}, 
+			#{agencyId}, 
+			#{py}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.junfly.water.entity.sys.SCity">
+		update s_city 
+		<set>
+			<if test="parentId != null">`PARENT_ID` = #{parentId}, </if>
+			<if test="regionName != null">`REGION_NAME` = #{regionName}, </if>
+			<if test="regionType != null">`REGION_TYPE` = #{regionType}, </if>
+			<if test="agencyId != null">`AGENCY_ID` = #{agencyId}, </if>
+			<if test="py != null">`PY` = #{py}</if>
+		</set>
+		where REGION_ID = #{regionId}
+	</update>
+	
+	<delete id="delete">
+		delete from s_city where REGION_ID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from s_city where REGION_ID in 
+		<foreach item="regionId" collection="array" open="(" separator="," close=")">
+			#{regionId}
+		</foreach>
+	</delete>
+
+</mapper>

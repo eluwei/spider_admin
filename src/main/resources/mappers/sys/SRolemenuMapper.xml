@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.junfly.water.mapper.sys.SRolemenuMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.junfly.water.entity.sys.SRolemenu" id="sRolemenuMap">
+        <result property="rolecode" column="ROLECODE"/>
+        <result property="menucode" column="MENUCODE"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.junfly.water.entity.sys.SRolemenu">
+		select * from s_rolemenu where ROLECODE = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.junfly.water.entity.sys.SRolemenu">
+		select * from s_rolemenu
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by ROLECODE desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from s_rolemenu 
+	</select>
+	 
+	<update id="update" parameterType="com.junfly.water.entity.sys.SRolemenu">
+		update s_rolemenu 
+		<set>
+			<if test="menucode != null">`MENUCODE` = #{menucode}</if>
+		</set>
+		where ROLECODE = #{rolecode}
+	</update>
+	
+	<delete id="delete">
+		delete from s_rolemenu where ROLECODE = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from s_rolemenu where ROLECODE in 
+		<foreach item="rolecode" collection="array" open="(" separator="," close=")">
+			#{rolecode}
+		</foreach>
+	</delete>
+
+	<select id="queryMenuIdList" resultType="String">
+		select menucode from s_rolemenu where ROLECODE = #{value}
+	</select>
+
+	<insert id="save">
+		insert into s_rolemenu
+		(
+		`ROLECODE`,
+		`MENUCODE`
+		)
+		values
+		<foreach collection="menuCodeList" item="item" index="index" separator="," >
+			(
+			#{rolecode},
+			#{item}
+			)
+		</foreach>
+	</insert>
+</mapper>

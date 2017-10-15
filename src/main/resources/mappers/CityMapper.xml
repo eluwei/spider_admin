@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.junfly.water.mapper.sys.CityMapper">
+
+	<resultMap id="CityMap" type="com.junfly.water.entity.sys.City">
+        <result property="regionId" column="REGION_ID"/>
+        <result property="parentId" column="PARENT_ID"/>
+        <result property="regionName" column="REGION_NAME"/>
+        <result property="regionType" column="REGION_TYPE"/>
+        <result property="agencyId" column="AGENCY_ID"/>
+        <result property="py" column="PY"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="CityColumnsSelect">
+	    <![CDATA[
+        A.REGION_ID , A.PARENT_ID , A.REGION_NAME , A.REGION_TYPE , A.AGENCY_ID, A.PY
+	    ]]>
+	</sql>
+	<!-- 用于insert插入公用抽取的列 -->
+	<sql id="CityColumnsInsert">
+	    <![CDATA[
+        REGION_ID , PARENT_ID , REGION_NAME , REGION_TYPE , AGENCY_ID,PY
+	    ]]>
+	</sql>
+    <insert id="CityInsert" >
+	    INSERT INTO S_CITY (
+	    <include refid="CityColumnsInsert"/>
+    <![CDATA[
+        ) VALUES (
+        	#{regionId},
+        	#{parentId},
+        	#{regionName},
+        	#{regionType},
+        	#{agencyId},
+        	#{py}
+        )
+    ]]>
+    </insert>
+
+    <update id="CityUpdate" >
+        UPDATE S_CITY
+        <set>
+        	<if test="parentId != null">
+        		PARENT_ID = #{parentId},
+        	</if>
+        	<if test="regionName != null">
+        		REGION_NAME = #{regionName},
+        	</if>
+        	<if test="regionType != null">
+        		REGION_TYPE = #{regionType},
+        	</if>
+        	<if test="agencyId != null">
+        		AGENCY_ID = #{agencyId}
+        	</if>
+        	<if test="py != null">
+        		PY = #{py}
+        	</if>
+        </set>  
+        WHERE 
+	        REGION_ID = #{regionId} 
+    </update>
+    
+    <update id="CityUpdateAll" >
+        UPDATE S_CITY
+        <set>
+        	PARENT_ID = #{parentId},
+        	REGION_NAME = #{regionName},
+        	REGION_TYPE = #{regionType},
+        	AGENCY_ID = #{agencyId},
+        	PY = #{py}
+        </set>  
+        WHERE 
+	        REGION_ID = #{regionId} 
+    </update>
+
+    <delete id="CityDelete">
+    <![CDATA[
+        DELETE FROM S_CITY
+        WHERE 
+	        REGION_ID = #{regionId} 
+    ]]>
+    </delete>
+    
+    <select id="CityGetById" resultMap="CityMap">
+	    SELECT <include refid="CityColumnsSelect"/>
+	    <![CDATA[
+	        FROM S_CITY A
+	        WHERE 
+		        A.REGION_ID = #{regionId} 
+	    ]]>
+    </select>
+
+	<sql id="CityWhere">
+		<where>
+			<if test="regionId != null">
+				AND  A.REGION_ID = #{regionId}
+			</if>
+			<if test="parentId != null">
+				AND  A.PARENT_ID = #{parentId}
+			</if>
+			<if test="regionName != null">
+				AND  A.REGION_NAME = #{regionName}
+			</if>
+			<if test="regionType != null">
+				AND  A.REGION_TYPE = #{regionType}
+			</if>
+			<if test="agencyId != null">
+				AND  A.AGENCY_ID = #{agencyId}
+			</if>
+			<if test="py != null">
+				AND  A.PY = #{py}
+			</if>
+		</where>
+	</sql>	 
+
+    <select id="cityList" resultMap="CityMap">
+	    SELECT <include refid="CityColumnsSelect"/> FROM S_CITY A 
+		<include refid="CityWhere"/>
+		ORDER BY A.REGION_ID
+    </select>
+</mapper>
+

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.junfly.water.mapper.sys.SysUserMapper">
+	<select id="queryObject" resultType="com.junfly.water.entity.sys.User">
+		select * from s_user where userid = #{value}
+	</select>
+
+	<select id="queryByCond" resultType="com.junfly.water.entity.sys.User">
+		select * from s_user
+		<where>
+			<if test="usercode != null and usercode.trim() != ''">
+				and `usercode` = #{usercode}
+			</if>
+			<if test="usertype != null">
+				and `usertype` = #{usertype}
+			</if>
+		</where>
+	</select>
+	
+	<select id="queryList" resultType="com.junfly.water.entity.sys.User">
+		select * from s_user
+		<where>
+			<if test="usercode != null and usercode.trim() != ''">
+				and `usercode` like concat('%',#{usercode},'%')
+			</if>
+			<if test="username != null and username.trim() != ''">
+				and `username` like concat('%',#{username},'%')
+			</if>
+			<if test="isactive != null and isactive.trim() != ''">
+				and `isactive` = #{isactive}
+			</if>
+		</where>
+		<choose>
+			<when test="sidx != null and sidx.trim() != ''">
+				order by ${sidx} ${order}
+			</when>
+			<otherwise>
+				order by userid desc
+			</otherwise>
+		</choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+	<select id="queryTotal" resultType="int">
+		select count(*) from s_user
+		<where>
+			<if test="usercode != null and usercode.trim() != ''">
+				and `usercode` like concat('%',#{usercode},'%')
+			</if>
+			<if test="username != null and username.trim() != ''">
+				and `username` like concat('%',#{username},'%')
+			</if>
+			<if test="isactive != null and isactive.trim() != ''">
+				and `isactive` = #{isactive}
+			</if>
+		</where>
+	</select>
+	
+	<!-- 查询用户的所有权限 -->
+	<select id="queryAllPerms" resultType="string">
+		select m.perms from s_user_role ur
+			LEFT JOIN s_role_menu rm on ur.role_id = rm.role_id
+			LEFT JOIN s_menu m on rm.menucode = m.menucode
+		where ur.user_id = #{userId}
+	</select>
+	
+	<!-- 查询用户的所有菜单ID --> 
+	<select id="queryAllMenuId" resultType="String">
+		select distinct rm.menucode from s_userrole ur
+			LEFT JOIN s_rolemenu rm on ur.rolecode = rm.rolecode
+		where ur.userid = #{userid}
+	</select>
+	
+	<select id="queryByUserCode" resultType="com.junfly.water.entity.sys.User">
+		select * from s_user where usercode = #{usercode}
+	</select>
+
+	<insert id="save" parameterType="com.junfly.water.entity.sys.User">
+		insert into s_user
+		(
+			`USERID`,
+			`USERCODE`,
+			`USERNAME`,
+			`PASSWORD`,
+			`PHONENUM`,
+			`LASTLOGINTIME`,
+			`ISACTIVE`,
+			`ISDELETE`,
+			`LASTLOGINIP`,
+			`SKIN`,
+			`PWD`,
+			`USERTYPE`,
+			`ORGCODE`,
+			`ORGCODES`
+		)
+		values
+		(
+			#{userid},
+			#{usercode},
+			#{username},
+			#{password},
+			#{phonenum},
+			#{lastlogintime},
+			#{isactive},
+			#{isdelete},
+			#{lastloginip},
+			#{skin},
+			#{pwd},
+			#{usertype},
+			#{orgcode},
+			#{orgcodes}
+		)
+	</insert>
+
+	<update id="update" parameterType="com.junfly.water.entity.sys.User">
+		update s_user
+		<set>
+			<if test="usercode != null">`USERCODE` = #{usercode}, </if>
+			<if test="username != null">`USERNAME` = #{username}, </if>
+			<if test="password != null">`PASSWORD` = #{password}, </if>
+			<if test="phonenum != null">`PHONENUM` = #{phonenum}, </if>
+			<if test="lastlogintime != null">`LASTLOGINTIME` = #{lastlogintime}, </if>
+			<if test="isactive != null">`ISACTIVE` = #{isactive}, </if>
+			<if test="isdelete != null">`ISDELETE` = #{isdelete}, </if>
+			<if test="lastloginip != null">`LASTLOGINIP` = #{lastloginip}, </if>
+			<if test="skin != null">`SKIN` = #{skin}, </if>
+			<if test="pwd != null">`PWD` = #{pwd}, </if>
+			<if test="usertype != null">`USERTYPE` = #{usertype}, </if>
+			<if test="orgcode != null">`ORGCODE` = #{orgcode},</if>
+			<if test="orgcodes != null">`ORGCODES` = #{orgcodes}</if>
+		</set>
+		where USERID = #{userid}
+	</update>
+	
+	<update id="updatePassword" parameterType="map">
+		update s_user set `PASSWORD` = #{newPassword}
+			where userid = #{userid}
+	</update>
+	
+	<delete id="deleteBatch">
+		delete from s_user where userid in
+		<foreach item="userid" collection="array" open="(" separator="," close=")">
+			#{userid}
+		</foreach>
+		;
+		delete from s_user_role where userid in
+		<foreach item="userid" collection="array" open="(" separator="," close=")">
+			#{userid}
+		</foreach>
+	</delete>
+
+</mapper>

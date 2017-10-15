@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.junfly.water.mapper.sys.SRoleMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.junfly.water.entity.sys.SRole" id="sRoleMap">
+        <result property="rolecode" column="ROLECODE"/>
+        <result property="rolename" column="ROLENAME"/>
+        <result property="describe" column="DESCRIBE"/>
+        <result property="isactive" column="ISACTIVE"/>
+        <result property="isdelete" column="ISDELETE"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.junfly.water.entity.sys.SRole">
+		select * from s_role where ROLECODE = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.junfly.water.entity.sys.SRole">
+		select * from s_role
+		<where>
+			<if test="rolename != null and rolename.trim() != ''">
+				and `rolename` like concat('%',#{rolename},'%')
+			</if>
+		</where>
+		<choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by ROLECODE desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from s_role
+		<where>
+			<if test="rolename != null and rolename.trim() != ''">
+				and `rolename` like concat('%',#{rolename},'%')
+			</if>
+		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.junfly.water.entity.sys.SRole">
+		insert into s_role
+		(
+			`ROLECODE`, 
+			`ROLENAME`, 
+			`DESCRIBE`, 
+			`ISACTIVE`, 
+			`ISDELETE`
+		)
+		values
+		(
+			#{rolecode}, 
+			#{rolename}, 
+			#{describe}, 
+			#{isactive}, 
+			#{isdelete}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.junfly.water.entity.sys.SRole">
+		update s_role 
+		<set>
+			<if test="rolename != null">`ROLENAME` = #{rolename}, </if>
+			<if test="describe != null">`DESCRIBE` = #{describe}, </if>
+			<if test="isactive != null">`ISACTIVE` = #{isactive}, </if>
+			<if test="isdelete != null">`ISDELETE` = #{isdelete}</if>
+		</set>
+		where ROLECODE = #{rolecode}
+	</update>
+	
+	<delete id="delete">
+		delete from s_role where ROLECODE = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from s_role where ROLECODE in
+		<foreach item="rolecode" collection="array" open="(" separator="," close=")">
+			#{rolecode}
+		</foreach>
+		;
+		delete from s_rolemenu where ROLECODE in
+		<foreach item="rolecode" collection="array" open="(" separator="," close=")">
+			#{rolecode}
+		</foreach>
+		;
+		delete from s_userrole where ROLECODE in
+		<foreach item="rolecode" collection="array" open="(" separator="," close=")">
+			#{rolecode}
+		</foreach>
+	</delete>
+
+</mapper>

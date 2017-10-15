@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.junfly.water.mapper.sys.SMenuMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.junfly.water.entity.sys.SMenu" id="sMenuMap">
+        <result property="menucode" column="MENUCODE"/>
+        <result property="menuname" column="MENUNAME"/>
+        <result property="pmenucode" column="PMENUCODE"/>
+        <result property="url" column="URL"/>
+        <result property="imgurl" column="IMGURL"/>
+        <result property="orderindex" column="ORDERINDEX"/>
+        <result property="isdelete" column="ISDELETE"/>
+        <result property="pMenuCodes" column="P_MENU_CODES"/>
+        <result property="urlApi" column="URL_API"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.junfly.water.entity.sys.SMenu">
+		select * from s_menu where MENUCODE = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.junfly.water.entity.sys.SMenu">
+		select s.*, (select menuname from s_menu m where m.menucode = s.menucode) pmenuname from s_menu s
+		<where>
+			<if test="menuname != null and menuname.trim() != ''">
+				and `menuname` like concat('%',#{menuname},'%')
+			</if>
+		</where>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by s.MENUCODE desc, s.orderindex asc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from s_menu
+		<where>
+			<if test="menuname != null and menuname.trim() != ''">
+				and `menuname` like concat('%',#{menuname},'%')
+			</if>
+		</where>
+	</select>
+	 
+	<insert id="save" parameterType="com.junfly.water.entity.sys.SMenu">
+		insert into s_menu
+		(
+			`MENUCODE`, 
+			`MENUNAME`, 
+			`PMENUCODE`, 
+			`URL`, 
+			`IMGURL`, 
+			`ORDERINDEX`, 
+			`ISDELETE`, 
+			`P_MENU_CODES`, 
+			`URL_API`
+		)
+		values
+		(
+			#{menucode}, 
+			#{menuname}, 
+			#{pmenucode}, 
+			#{url}, 
+			#{imgurl}, 
+			#{orderindex}, 
+			#{isdelete}, 
+			#{pMenuCodes}, 
+			#{urlApi}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.junfly.water.entity.sys.SMenu">
+		update s_menu 
+		<set>
+			<if test="menuname != null">`MENUNAME` = #{menuname}, </if>
+			<if test="pmenucode != null">`PMENUCODE` = #{pmenucode}, </if>
+			<if test="url != null">`URL` = #{url}, </if>
+			<if test="imgurl != null">`IMGURL` = #{imgurl}, </if>
+			<if test="orderindex != null">`ORDERINDEX` = #{orderindex}, </if>
+			<if test="isdelete != null">`ISDELETE` = #{isdelete}, </if>
+			<if test="pMenuCodes != null">`P_MENU_CODES` = #{pMenuCodes}, </if>
+			<if test="urlApi != null">`URL_API` = #{urlApi}</if>
+		</set>
+		where MENUCODE = #{menucode}
+	</update>
+	
+	<delete id="delete">
+		delete from s_menu where MENUCODE = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from s_menu where MENUCODE in 
+		<foreach item="menucode" collection="array" open="(" separator="," close=")">
+			#{menucode}
+		</foreach>
+	</delete>
+
+	<select id="queryListParentId" resultType="com.junfly.water.entity.sys.SMenu">
+		select * from s_menu where pmenucode = #{pmenucode} order by orderindex asc
+	</select>
+</mapper>

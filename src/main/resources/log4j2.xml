@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout>
+                <pattern>%d %p %C{1.} [%t] %m%n</pattern>
+            </PatternLayout>
+        </Console>
+        <File name="File" fileName="/home/java/env/boot/logs/new_env.log">
+            <PatternLayout>
+                <pattern>%d %p %C{1.} [%t] %m%n</pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Logger name="org.apache.catalina.util.LifecycleBase" level="error" />
+        <Logger name="org.apache.coyote.http11.Http11NioProtocol" level="warn" />
+        <Logger name="org.apache.tomcat.util.net.NioSelectorPool" level="warn" />
+        <Logger name="org.springframework" level="warn" />
+        <Logger name="com.mchange.v2.resourcepool.BasicResourcePool" level="error"/>
+        <Logger name="com.mchange.v2.c3p0" level="error"/>
+        <Logger name="org.apache.activemq" level="error"/>
+        <!-- mybatis loggers -->
+        <logger name="com.ibatis" level="DEBUG" />
+        <logger name="com.ibatis.common.jdbc.SimpleDataSource" level="DEBUG" />
+        <logger name="com.ibatis.common.jdbc.ScriptRunner" level="DEBUG" />
+        <logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="DEBUG" />
+        <!-- sql loggers -->
+        <Logger name="java.sql.Connection" level="DEBUG"/>
+        <Logger name="java.sql.Statement" level="DEBUG" />
+        <Logger name="java.sql.PreparedStatement" level="DEBUG"/>
+        <Logger name="java.sql.ResultSet" level="DEBUG"/>
+        <Root level="DEBUG">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
+        </Root>
+    </Loggers>
+</Configuration>

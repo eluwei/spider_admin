@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.junfly.water.mapper.UserMapper">
+
+	<resultMap id="UserMap" type="com.junfly.water.entity.sys.User">
+		<result property="userid" column="USERID"/>
+		<result property="usercode" column="USERCODE"/>
+		<result property="username" column="USERNAME"/>
+		<result property="password" column="PASSWORD"/>
+		<result property="phonenum" column="PHONENUM"/>
+		<result property="lastlogintime" column="LASTLOGINTIME"/>
+		<result property="isactive" column="ISACTIVE"/>
+		<result property="isdelete" column="ISDELETE"/>
+		<result property="lastloginip" column="LASTLOGINIP"/>
+		<result property="usertype" column="USERTYPE"/>
+		<result property="pwd" column="PWD"/>
+		<result property="orgcode" column="orgcode"/>
+		<result property="orgname" column="orgname"/>
+		<result property="wwid" column="wwid"/>
+	</resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="UserColumnsSelect">
+		<![CDATA[
+         USERID , S_USER.USERCODE , USERNAME , PASSWORD , PHONENUM , LASTLOGINTIME , ISACTIVE , LASTLOGINIP ,USERTYPE,orgcode
+	    ]]>
+	</sql>
+
+	<select id="userLoginUser" resultMap="UserMap">
+		SELECT <include refid="UserColumnsSelect"/>
+		, s_city.region_name as orgname
+		, c.waterworkid wwid
+		FROM S_USER  left join s_city on orgcode = region_id
+		left join s_user_waterwork c on S_USER.usercode = c.usercode
+		WHERE S_USER.USERCODE = #{usercode}
+	</select>
+</mapper>

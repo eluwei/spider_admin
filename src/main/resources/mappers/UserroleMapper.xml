@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.junfly.water.mapper.sys.UserroleMapper">
+	
+	<resultMap id="UserroleMap" type="com.junfly.water.entity.sys.Userrole">
+        <result property="userid" column="USERID"/>
+        <result property="rolecode" column="ROLECODE"/>
+    </resultMap>
+
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="UserroleColumnsSelect">
+	    <![CDATA[
+         USERID , ROLECODE 
+	    ]]>
+	</sql>
+	<!-- 用于insert插入公用抽取的列 -->
+	<sql id="UserroleColumnsInsert">
+	    <![CDATA[
+        USERID ,ROLECODE 
+	    ]]>
+	</sql>
+    <insert id="UserroleInsert" >
+	    INSERT INTO S_USERROLE (
+	    <include refid="UserroleColumnsInsert"/>
+    <![CDATA[
+        ) VALUES (
+        	#{userid},
+        	#{rolecode}
+        )
+    ]]>
+    </insert>
+    
+    <sql id="UserroleWhere">
+		<where>
+			<if test="userid != null">
+				AND USERID = #{userid}
+			</if>
+			<if test="rolecode != null">
+				AND ROLECODE = #{rolecode}
+			</if>
+		</where>
+	</sql>	
+
+    <update id="UserroleUpdate" >
+        UPDATE S_USERROLE
+        <set>
+        </set>  
+        WHERE 
+	        USERID = #{userid}  AND 
+	        ROLECODE = #{rolecode} 
+    </update>
+
+    <delete id="UserroleDelete">
+    	DELETE FROM S_USERROLE
+    	<include refid="UserroleWhere"/>
+    </delete>
+    
+    <select id="UserroleGetById" resultMap="UserroleMap">
+	    SELECT <include refid="UserroleColumnsSelect"/>
+	    <![CDATA[
+	        FROM S_USERROLE 
+	        WHERE 
+		        USERID = #{userid}  AND 
+		        ROLECODE = #{rolecode}
+	    ]]>
+    </select> 
+
+    <select id="userroleList" resultMap="UserroleMap">
+	    SELECT <include refid="UserroleColumnsSelect"/> FROM S_USERROLE 
+		<include refid="UserroleWhere"/>
+    </select>
+</mapper>
+

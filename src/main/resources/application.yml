@@ -1,0 +1,42 @@
+# Tomcat
+server:
+    tomcat:
+        max-threads: 1000
+        min-spare-threads: 30
+    port: 12001
+
+# mysql
+spring:
+    application:
+        name: env_api
+    # 环境 dev|test|pro
+    profiles:
+        active: dev
+    datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.jdbc.Driver
+        # jackson时间格式化
+    jackson:
+        time-zone: GMT+8
+        date-format: yyyy-MM-dd HH:mm:ss
+    thymeleaf:
+        cache: false
+    freemarker:
+        template-loader-path: classpath:/template/
+
+# Mybatis配置
+mybatis:
+    mapper-locations: classpath:mappers/*.xml,mappers/*/*.xml
+    config-location: classpath:mybatis.xml
+
+logging:
+    config: classpath:log4j2.xml
+
+page:
+    pageSize: 30
+
+pagehelper:
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql

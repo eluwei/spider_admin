@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.junfly.water.mapper.spider.PybbsTopicMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.junfly.water.entity.spider.PybbsTopic" id="pybbsTopicMap">
+        <result property="id" column="id"/>
+        <result property="content" column="content"/>
+        <result property="good" column="good"/>
+        <result property="inTime" column="in_time"/>
+        <result property="labelId" column="label_id"/>
+        <result property="lastReplyTime" column="last_reply_time"/>
+        <result property="topicLock" column="topic_lock"/>
+        <result property="modifyTime" column="modify_time"/>
+        <result property="replyCount" column="reply_count"/>
+        <result property="tab" column="tab"/>
+        <result property="title" column="title"/>
+        <result property="top" column="top"/>
+        <result property="upIds" column="up_ids"/>
+        <result property="view" column="view"/>
+        <result property="userId" column="user_id"/>
+    </resultMap>
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="pybbsTopicSelect">
+        <![CDATA[
+            A.`id`,
+            A.`content`,
+            A.`good`,
+            A.`in_time`,
+            A.`label_id`,
+            A.`last_reply_time`,
+            A.`topic_lock`,
+            A.`modify_time`,
+            A.`reply_count`,
+            A.`tab`,
+            A.`title`,
+            A.`top`,
+            A.`up_ids`,
+            A.`view`,
+            A.`user_id`
+        ]]>
+    </sql>
+    <!-- 用于insert插入公用抽取的列 -->
+    <sql id="pybbsTopicInsert">
+        <![CDATA[
+                `content`,
+                `good`,
+                `in_time`,
+                `label_id`,
+                `last_reply_time`,
+                `topic_lock`,
+                `modify_time`,
+                `reply_count`,
+                `tab`,
+                `title`,
+                `top`,
+                `up_ids`,
+                `view`,
+                `user_id`
+        ]]>
+    </sql>
+
+    <select id="queryObject" resultMap="pybbsTopicMap">
+        select <include refid="pybbsTopicSelect"/> from pybbs_topic A where A.id = #{value}
+    </select>
+
+    <select id="queryList" resultMap="pybbsTopicMap">
+        select <include refid="pybbsTopicSelect"/> from pybbs_topic A
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by A.${sidx} A.${order}
+            </when>
+            <otherwise>
+                order by A.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from pybbs_topic
+    </select>
+
+    <insert id="save" parameterType="com.junfly.water.entity.spider.PybbsTopic" 
+            useGeneratedKeys="true" keyProperty="id">
+        insert into pybbs_topic
+        (
+        <include refid="pybbsTopicInsert"/>
+        )
+        values
+        (
+            #{content},
+            #{good},
+            #{inTime},
+            #{labelId},
+            #{lastReplyTime},
+            #{topicLock},
+            #{modifyTime},
+            #{replyCount},
+            #{tab},
+            #{title},
+            #{top},
+            #{upIds},
+            #{view},
+            #{userId}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.junfly.water.entity.spider.PybbsTopic">
+        update pybbs_topic
+        <set>
+                <if test="content != null">`content` = #{content}, 
+                </if>
+                <if test="good != null">`good` = #{good}, 
+                </if>
+                <if test="inTime != null">`in_time` = #{inTime}, 
+                </if>
+                <if test="labelId != null">`label_id` = #{labelId}, 
+                </if>
+                <if test="lastReplyTime != null">`last_reply_time` = #{lastReplyTime}, 
+                </if>
+                <if test="topicLock != null">`topic_lock` = #{topicLock}, 
+                </if>
+                <if test="modifyTime != null">`modify_time` = #{modifyTime}, 
+                </if>
+                <if test="replyCount != null">`reply_count` = #{replyCount}, 
+                </if>
+                <if test="tab != null">`tab` = #{tab}, 
+                </if>
+                <if test="title != null">`title` = #{title}, 
+                </if>
+                <if test="top != null">`top` = #{top}, 
+                </if>
+                <if test="upIds != null">`up_ids` = #{upIds}, 
+                </if>
+                <if test="view != null">`view` = #{view}, 
+                </if>
+                <if test="userId != null">`user_id` = #{userId}
+                </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete from pybbs_topic where id = #{value}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from pybbs_topic where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+        #{id}
+        </foreach>
+    </delete>
+
+</mapper>

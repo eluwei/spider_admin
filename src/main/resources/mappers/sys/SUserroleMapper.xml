@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.junfly.water.mapper.sys.SUserroleMapper">
+
+	<!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.junfly.water.entity.sys.SUserrole" id="sUserroleMap">
+        <result property="userid" column="USERID"/>
+        <result property="rolecode" column="ROLECODE"/>
+    </resultMap>
+
+	<select id="queryObject" resultType="com.junfly.water.entity.sys.SUserrole">
+		select * from s_userrole where USERID = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.junfly.water.entity.sys.SUserrole">
+		select * from s_userrole
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by USERID desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from s_userrole 
+	</select>
+	 
+	<insert id="save">
+		insert into s_userrole
+		(
+		`USERID`,
+		`ROLECODE`
+		)
+		values
+		<foreach collection="roleCodes" item="item" index="index" separator="," >
+			(
+			#{userid},
+			#{item}
+			)
+		</foreach>
+	</insert>
+	 
+	<update id="update" parameterType="com.junfly.water.entity.sys.SUserrole">
+		update s_userrole 
+		<set>
+			<if test="rolecode != null">`ROLECODE` = #{rolecode}</if>
+		</set>
+		where USERID = #{userid}
+	</update>
+	
+	<delete id="delete">
+		delete from s_userrole where USERID = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from s_userrole where USERID in 
+		<foreach item="userid" collection="array" open="(" separator="," close=")">
+			#{userid}
+		</foreach>
+	</delete>
+
+	<select id="queryRoleCodes" resultType="String">
+		select ROLECODE from s_userrole where USERID = #{value}
+	</select>
+</mapper>
