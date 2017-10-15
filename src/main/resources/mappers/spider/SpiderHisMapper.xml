@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.junfly.water.mapper.spider.SpiderHisMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.junfly.water.entity.spider.SpiderHis" id="spiderHisMap">
+        <result property="id" column="id"/>
+        <result property="hisTitle" column="his_title"/>
+    </resultMap>
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="spiderHisSelect">
+        <![CDATA[
+            A.`id`,
+            A.`his_title`
+        ]]>
+    </sql>
+    <!-- 用于insert插入公用抽取的列 -->
+    <sql id="spiderHisInsert">
+        <![CDATA[
+                `id`,
+                `his_title`
+        ]]>
+    </sql>
+
+    <select id="queryObject" resultMap="spiderHisMap">
+        select <include refid="spiderHisSelect"/> from spider_his A where A.id = #{value}
+    </select>
+
+    <select id="queryList" resultMap="spiderHisMap">
+        select <include refid="spiderHisSelect"/> from spider_his A
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by A.${sidx} A.${order}
+            </when>
+            <otherwise>
+                order by A.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from spider_his
+    </select>
+
+    <insert id="save" parameterType="com.junfly.water.entity.spider.SpiderHis" >
+        insert into spider_his
+        (
+        <include refid="spiderHisInsert"/>
+        )
+        values
+        (
+            #{id},
+            #{hisTitle}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.junfly.water.entity.spider.SpiderHis">
+        update spider_his
+        <set>
+                <if test="hisTitle != null">`his_title` = #{hisTitle}
+                </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete from spider_his where id = #{value}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from spider_his where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+        #{id}
+        </foreach>
+    </delete>
+
+</mapper>
