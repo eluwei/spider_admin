@@ -28,7 +28,8 @@ public class WeApp {
         List<WeApp> apps = new ArrayList<WeApp>();
         WeApp app;
 
-        app = new WeApp("小小包麻麻","xxbmm123","","");
+//        app = new WeApp("小小包麻麻","xxbmm123","","");
+        app = new WeApp("一小时爸爸","hrdaddy","","");
         apps.add(app);
 
         return apps;

@@ -22,7 +22,7 @@ public class GenUtilsSpec {
 
     @Test
     public void testGeneratorCode() {
-        String[] tables = new String[]{"pybbs_topic"};
+        String[] tables = new String[]{"spider_source"};
         String packageName = "spider";
         byte[] out = sysGeneratorService.generatorCode(tables, packageName);
         FileUtils.getFile(out, "E:\\outTemplate", "code.zip");

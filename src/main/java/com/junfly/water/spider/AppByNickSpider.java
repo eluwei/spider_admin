@@ -1,5 +1,6 @@
 package com.junfly.water.spider;
 
+import com.junfly.water.entity.spider.SpiderSource;
 import com.junfly.water.entity.spider.WeApp;
 import com.junfly.water.spider.helper.Browser;
 import com.junfly.water.spider.helper.Util;
@@ -25,9 +26,9 @@ public class AppByNickSpider {
     public String searchInputSelector = "#query";
     public String nextPageSelector = "#sogou_next";
 
-    public WeApp crawlApp(WeApp app) {
-        String appNick = app.nick;
-        String appCode = app.appcode;
+    public WeApp crawlApp(SpiderSource spiderSource) {
+        String appNick = spiderSource.getName();
+        String appCode = spiderSource.getCode();
         weAppInfo = new WeApp(appNick, appCode);
         //初始化浏览器
         driver = Browser.init();

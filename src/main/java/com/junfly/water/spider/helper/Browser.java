@@ -22,8 +22,10 @@ import java.util.Set;
  */
 public class Browser {
     public static WebDriver driver;
+
     /**
      * 获取随机的代理
+     *
      * @return
      * @throws IOException
      */
@@ -53,14 +55,16 @@ public class Browser {
         in.close();
         return res;
     }
+
     /**
      * 通过代理初始化浏览器
+     *
      * @param proxy
      * @return
      */
-    public static WebDriver initByProxy(String proxy){
+    public static WebDriver initByProxy(String proxy) {
         String os = System.getProperty("os.name");
-        if(os.contains("Windows")){
+        if (os.contains("Windows")) {
             System.setProperty("webdriver.chrome.driver",
                     "D:\\soft\\webDriver\\chromedriver.exe");
             org.openqa.selenium.Proxy p = new org.openqa.selenium.Proxy();
@@ -71,68 +75,67 @@ public class Browser {
             cap.setCapability(ChromeOptions.CAPABILITY, co);
             driver = new ChromeDriver(cap);
             System.out.println("切换代理成功");
-        }else{
+        } else {
             driver = new FirefoxDriver();
         }
         return driver;
     }
+
     /**
      * 初始化浏览器
+     *
      * @return
      */
-    public static WebDriver init(){
+    public static WebDriver init() {
         String os = System.getProperty("os.name");
-        System.out.println(os);
         //windows 下使用chrome linux下使用firefox
-        if(os.contains("Windows")){
-//            DesiredCapabilities capabilities = DesiredCapabilities.chrome();
-//            Proxy proxy = new Proxy();
-//            proxy.setHttpProxy("121.34.190.253:9999");
-//            capabilities.setCapability("proxy", proxy);
-//            System.setProperty("webdriver.chrome.driver",
-//                    "D:\\soft\\webDriver\\chromedriver.exe");
-              System.setProperty("webdriver.chrome.driver",
+        if (os.contains("Windows")) {
+            System.setProperty("webdriver.chrome.driver",
                     "C:\\project\\utfpro\\spider_admin\\webDriver\\chromedriver.exe");
-            driver = new ChromeDriver();
-//            driver.get("http://www.ip138.com");
-        }else{
+            if (driver == null) {
+                driver = new ChromeDriver();
+            }
+        } else {
             driver = new FirefoxDriver();
         }
         return driver;
     }
+
     /**
      * 通过选择器，往input中写入词语
      */
-    public static void inputAndSubmit(String selector,String word){
+    public static void inputAndSubmit(String selector, String word) {
         WebElement we = driver.findElement(By.cssSelector(selector));
-        if(we != null){
+        if (we != null) {
             for (int i = 0; i < word.length(); i++) {
-                char  item =  word.charAt(i);
+                char item = word.charAt(i);
                 we.sendKeys(String.valueOf(item));
-                Util.sleepRandom(500,1000);
+                Util.sleepRandom(500, 1000);
             }
 //            we.submit();
-        }else{
-            System.out.println("当前页面:"+driver.getCurrentUrl());
-            System.out.println("元素没有找到"+selector);
+        } else {
+            System.out.println("当前页面:" + driver.getCurrentUrl());
+            System.out.println("元素没有找到" + selector);
             System.exit(0);
         }
     }
+
     /**
      * 通过选择器找到元素并点击
      */
-    public static void clickBySelector(String selector){
+    public static void clickBySelector(String selector) {
         WebElement we = driver.findElement(By.cssSelector(selector));
-        if(we != null){
+        if (we != null) {
             we.click();
-        }else{
-            System.out.println("当前页面:"+driver.getCurrentUrl());
-            System.out.println("元素没有找到"+selector);
+        } else {
+            System.out.println("当前页面:" + driver.getCurrentUrl());
+            System.out.println("元素没有找到" + selector);
             System.exit(0);
         }
     }
+
     //根据标题切换窗口
-    public  static boolean switchToWindow(String windowTitle){
+    public static boolean switchToWindow(String windowTitle) {
         boolean flag = false;
         try {
             String currentHandle = driver.getWindowHandle();
@@ -152,7 +155,7 @@ public class Browser {
                 }
             }
         } catch (NoSuchWindowException e) {
-            System.out.println("Window: " + windowTitle+ " cound not found!"+ e.fillInStackTrace());
+            System.out.println("Window: " + windowTitle + " cound not found!" + e.fillInStackTrace());
             flag = false;
         }
         return flag;
@@ -160,9 +163,10 @@ public class Browser {
 
     /**
      * 关闭其它窗口
+     *
      * @return
      */
-    public  static boolean closeOtherWindowByTitle(String title){
+    public static boolean closeOtherWindowByTitle(String title) {
         boolean flag = false;
         try {
             String currentHandle = driver.getWindowHandle();
@@ -182,14 +186,16 @@ public class Browser {
             }
             driver.switchTo().window(currentHandle);
         } catch (NoSuchWindowException e) {
-            System.out.println("Window: " + title+ " cound not found!"+ e.fillInStackTrace());
+            System.out.println("Window: " + title + " cound not found!" + e.fillInStackTrace());
             flag = false;
         }
 
         return flag;
     }
+
     /**
      * 判断元素是否存在
+     *
      * @param Locator
      * @return
      */

@@ -1,12 +1,10 @@
 package com.junfly.water.spider;
 
 import com.junfly.water.SampleActiveMQApplication;
-import com.junfly.water.entity.spider.Article;
-import com.junfly.water.entity.spider.PybbsTopic;
-import com.junfly.water.entity.spider.SpiderHis;
-import com.junfly.water.entity.spider.WeApp;
+import com.junfly.water.entity.spider.*;
 import com.junfly.water.service.spider.PybbsTopicService;
 import com.junfly.water.service.spider.SpiderHisService;
+import com.junfly.water.service.spider.SpiderSourceService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -16,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -33,34 +32,39 @@ public class AppByNickSpiderSpec {
     @Autowired
     private SpiderHisService spiderHisService;
 
+    @Autowired
+    private SpiderSourceService spiderSourceService;
+
     /**
      * 根据微信号昵称爬取
      */
     @Test
     public void spiderByNick() {
-        List<WeApp> apps = WeApp.getAll();
-        WeApp app =  apps.get(0);
-        ArticlesByAppSpider sp = new ArticlesByAppSpider();
-        List<Article> articles = sp.crawlArticles(app);
-        for (Article article : articles) {
-            List<SpiderHis> spiderHis = spiderHisService.queryByTitle(article.getTitle());
-            if (spiderHis == null || spiderHis.isEmpty()) {
-                PybbsTopic pybbsTopic = new PybbsTopic();
-                pybbsTopic.setContent(article.getContent());
-                pybbsTopic.setTitle(article.getTitle());
-                pybbsTopic.setInTime(new Date());
-                pybbsTopic.setGood(0);
-                pybbsTopic.setLabelId("2,");
-                pybbsTopic.setModifyTime(new Date());
-                pybbsTopic.setLastReplyTime(null);
-                pybbsTopic.setTab("分享");
-                pybbsTopic.setReplyCount(0);
-                pybbsTopic.setTop(0);
-                pybbsTopic.setTopicLock(0);
-                pybbsTopic.setUpIds("");
-                pybbsTopic.setUserId(1);
-                pybbsTopic.setView(0);
-                pybbsTopicService.saveWithHistory(pybbsTopic);
+        List<SpiderSource> spiderSources = spiderSourceService.queryList(new HashMap<String, Object>());
+        for (SpiderSource spiderSource : spiderSources) {
+            ArticlesByAppSpider sp = new ArticlesByAppSpider();
+            List<Article> articles = sp.crawlArticles(spiderSource);
+            for (Article article : articles) {
+                List<SpiderHis> spiderHis = spiderHisService.queryByTitle(article.getTitle());
+                if (spiderHis == null || spiderHis.isEmpty()) {
+                    article = sp.processArticleDetail(article);
+                    PybbsTopic pybbsTopic = new PybbsTopic();
+                    pybbsTopic.setContent(article.getContent());
+                    pybbsTopic.setTitle(article.getTitle());
+                    pybbsTopic.setInTime(new Date());
+                    pybbsTopic.setGood(0);
+                    pybbsTopic.setLabelId("2,");
+                    pybbsTopic.setModifyTime(new Date());
+                    pybbsTopic.setLastReplyTime(null);
+                    pybbsTopic.setTab("分享");
+                    pybbsTopic.setReplyCount(0);
+                    pybbsTopic.setTop(0);
+                    pybbsTopic.setTopicLock(0);
+                    pybbsTopic.setUpIds("");
+                    pybbsTopic.setUserId(1);
+                    pybbsTopic.setView(0);
+                    pybbsTopicService.saveWithHistory(pybbsTopic);
+                }
             }
         }
     }
