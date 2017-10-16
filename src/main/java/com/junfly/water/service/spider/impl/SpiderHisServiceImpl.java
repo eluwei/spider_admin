@@ -52,5 +52,12 @@ public class SpiderHisServiceImpl implements SpiderHisService {
 	public void deleteBatch(Integer[] ids){
 		spiderHisMapper.deleteBatch(ids);
 	}
-	
+
+	@Override
+	public List<SpiderHis> queryByTitle(String title) {
+		SpiderHis spiderHis = new SpiderHis();
+		spiderHis.setHisTitle(title);
+		return spiderHisMapper.queryByTitle(spiderHis);
+	}
+
 }

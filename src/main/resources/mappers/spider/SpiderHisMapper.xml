@@ -27,6 +27,10 @@
         select <include refid="spiderHisSelect"/> from spider_his A where A.id = #{value}
     </select>
 
+    <select id="queryByTitle" resultMap="spiderHisMap">
+        select <include refid="spiderHisSelect"/> from spider_his A where A.his_title = #{hisTitle}
+    </select>
+
     <select id="queryList" resultMap="spiderHisMap">
         select <include refid="spiderHisSelect"/> from spider_his A
         <choose>

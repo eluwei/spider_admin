@@ -28,4 +28,6 @@ public interface SpiderHisService {
 	void delete(Integer id);
 	
 	void deleteBatch(Integer[] ids);
+
+    List<SpiderHis> queryByTitle(String title);
 }

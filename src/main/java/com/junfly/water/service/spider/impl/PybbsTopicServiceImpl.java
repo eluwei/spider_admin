@@ -1,5 +1,7 @@
 package com.junfly.water.service.spider.impl;
 
+import com.junfly.water.entity.spider.SpiderHis;
+import com.junfly.water.mapper.spider.SpiderHisMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,13 +12,16 @@ import java.util.Map;
 import com.junfly.water.mapper.spider.PybbsTopicMapper;
 import com.junfly.water.entity.spider.PybbsTopic;
 import com.junfly.water.service.spider.PybbsTopicService;
-
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("pybbsTopicService")
 public class PybbsTopicServiceImpl implements PybbsTopicService {
 	@Autowired
 	private PybbsTopicMapper pybbsTopicMapper;
+
+	@Autowired
+	private SpiderHisMapper spiderHisMapper;
 	
 	@Override
 	public PybbsTopic queryObject(Integer id){
@@ -52,5 +57,14 @@ public class PybbsTopicServiceImpl implements PybbsTopicService {
 	public void deleteBatch(Integer[] ids){
 		pybbsTopicMapper.deleteBatch(ids);
 	}
-	
+
+	@Override
+	@Transactional
+	public void saveWithHistory(PybbsTopic pybbsTopic) {
+		SpiderHis spiderHis = new SpiderHis();
+		spiderHis.setHisTitle(pybbsTopic.getTitle());
+		spiderHisMapper.save(spiderHis);
+		pybbsTopicMapper.save(pybbsTopic);
+	}
+
 }

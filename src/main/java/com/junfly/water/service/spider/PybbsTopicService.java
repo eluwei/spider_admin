@@ -28,4 +28,6 @@ public interface PybbsTopicService {
 	void delete(Integer id);
 	
 	void deleteBatch(Integer[] ids);
+
+    void saveWithHistory(PybbsTopic pybbsTopic);
 }

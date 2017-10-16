@@ -6,6 +6,8 @@ import com.junfly.water.mapper.BaseMapper;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * 
  * 
@@ -15,5 +17,6 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface SpiderHisMapper extends BaseMapper<SpiderHis> {
-	
+
+    List<SpiderHis> queryByTitle(SpiderHis spiderHis);
 }
