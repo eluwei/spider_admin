@@ -1,30 +1,34 @@
-package com.junfly.water.spider;
+package com.junfly.water.job;
 
-import com.junfly.water.SampleActiveMQApplication;
-import com.junfly.water.entity.spider.*;
+import com.junfly.water.entity.spider.Article;
+import com.junfly.water.entity.spider.PybbsTopic;
+import com.junfly.water.entity.spider.SpiderHis;
+import com.junfly.water.entity.spider.SpiderSource;
 import com.junfly.water.service.spider.PybbsTopicService;
 import com.junfly.water.service.spider.SpiderHisService;
 import com.junfly.water.service.spider.SpiderSourceService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import com.junfly.water.spider.ArticlesByAppSpider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by Administrator on 2015/9/22.
+ * @Author: pq
+ * @Description:
+ * @Date: 2017/10/18 21:43
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = SampleActiveMQApplication.class)
-public class AppByNickSpiderSpec {
+@Component
+@EnableScheduling
+public class WechatSpiderJob {
 
-    private Logger logger = LoggerFactory.getLogger(AppByNickSpiderSpec.class);
+    private Logger logger = LoggerFactory.getLogger(WechatSpiderJob.class);
 
     @Autowired
     private PybbsTopicService pybbsTopicService;
@@ -35,11 +39,8 @@ public class AppByNickSpiderSpec {
     @Autowired
     private SpiderSourceService spiderSourceService;
 
-    /**
-     * 根据微信号昵称爬取
-     */
-    @Test
-    public void spiderByNick() {
+    @Scheduled(cron = "0 25 11 * * ?") // 每天11点25分执行一次
+    public void task() {
         List<SpiderSource> spiderSources = spiderSourceService.queryList(new HashMap<String, Object>());
         for (SpiderSource spiderSource : spiderSources) {
             ArticlesByAppSpider sp = new ArticlesByAppSpider();
@@ -67,11 +68,5 @@ public class AppByNickSpiderSpec {
                 }
             }
         }
-    }
-
-    @Test
-    public void changeImageWitchContent() {
-        PybbsTopic pybbsTopic = pybbsTopicService.queryObject(37);
-
     }
 }

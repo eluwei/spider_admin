@@ -7,6 +7,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
@@ -89,14 +91,23 @@ public class Browser {
     public static WebDriver init() {
         String os = System.getProperty("os.name");
         //windows 下使用chrome linux下使用firefox
+        DesiredCapabilities desiredCapabilities = DesiredCapabilities.phantomjs();
+        //设置参数
+        desiredCapabilities.setCapability("phantomjs.page.settings.userAgent", "Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0");
+        desiredCapabilities.setCapability("phantomjs.page.customHeaders.User-Agent", "Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:50.0) Gecko/20100101 　　Firefox/50.0");
         if (os.contains("Windows")) {
-            System.setProperty("webdriver.chrome.driver",
-                    "C:\\project\\utfpro\\spider_admin\\webDriver\\chromedriver.exe");
+//            System.setProperty("webdriver.chrome.driver",
+//                    "C:\\project\\utfpro\\spider_admin\\webDriver\\chromedriver.exe");
+            System.setProperty("phantomjs.binary.path", "D:\\soft\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe");//设置PhantomJs访问路径
             if (driver == null) {
-                driver = new ChromeDriver();
+//                driver = new ChromeDriver();
+                driver = new PhantomJSDriver(desiredCapabilities);
             }
         } else {
-            driver = new FirefoxDriver();
+            System.setProperty("phantomjs.binary.path", "/usr/local/phantomjs/bin/phantomjs");
+            if (driver == null) {
+                driver = new PhantomJSDriver(desiredCapabilities);
+            }
         }
         return driver;
     }

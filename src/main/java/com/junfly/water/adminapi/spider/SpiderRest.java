@@ -1,30 +1,35 @@
-package com.junfly.water.spider;
+package com.junfly.water.adminapi.spider;
 
-import com.junfly.water.SampleActiveMQApplication;
-import com.junfly.water.entity.spider.*;
+import com.junfly.water.entity.spider.Article;
+import com.junfly.water.entity.spider.PybbsTopic;
+import com.junfly.water.entity.spider.SpiderHis;
+import com.junfly.water.entity.spider.SpiderSource;
 import com.junfly.water.service.spider.PybbsTopicService;
 import com.junfly.water.service.spider.SpiderHisService;
 import com.junfly.water.service.spider.SpiderSourceService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.junfly.water.spider.ArticlesByAppSpider;
+import com.junfly.water.utils.R;
+import com.junfly.water.utils.annotation.IgnoreAuth;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by Administrator on 2015/9/22.
+ * @Author: pq
+ * @Description:
+ * @Date: 2017/10/17 23:42
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = SampleActiveMQApplication.class)
-public class AppByNickSpiderSpec {
-
-    private Logger logger = LoggerFactory.getLogger(AppByNickSpiderSpec.class);
+@RestController
+@RequestMapping("/admin_api/spider")
+@Api("爬虫")
+public class SpiderRest {
 
     @Autowired
     private PybbsTopicService pybbsTopicService;
@@ -36,10 +41,12 @@ public class AppByNickSpiderSpec {
     private SpiderSourceService spiderSourceService;
 
     /**
-     * 根据微信号昵称爬取
+     * 爬取微信公众号
      */
-    @Test
-    public void spiderByNick() {
+    @GetMapping("/spiderByNick")
+    @ApiOperation("爬取微信公众号")
+    @IgnoreAuth
+    public R spiderByNick() {
         List<SpiderSource> spiderSources = spiderSourceService.queryList(new HashMap<String, Object>());
         for (SpiderSource spiderSource : spiderSources) {
             ArticlesByAppSpider sp = new ArticlesByAppSpider();
@@ -67,11 +74,6 @@ public class AppByNickSpiderSpec {
                 }
             }
         }
-    }
-
-    @Test
-    public void changeImageWitchContent() {
-        PybbsTopic pybbsTopic = pybbsTopicService.queryObject(37);
-
+        return R.ok("调用成功");
     }
 }

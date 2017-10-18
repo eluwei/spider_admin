@@ -6,7 +6,7 @@
                 <pattern>%d %p %C{1.} [%t] %m%n</pattern>
             </PatternLayout>
         </Console>
-        <File name="File" fileName="/home/java/env/boot/logs/new_env.log">
+        <File name="File" fileName="/home/xgb/spider/spider.log">
             <PatternLayout>
                 <pattern>%d %p %C{1.} [%t] %m%n</pattern>
             </PatternLayout>
