@@ -1,24 +1,20 @@
-package com.junfly.water.adminapi.spider;
+package com.junfly.water.utils;
 
-import com.junfly.water.entity.spider.*;
+import com.junfly.water.SampleActiveMQApplication;
+import com.junfly.water.entity.spider.PybbsTopic;
+import com.junfly.water.entity.spider.SpiderProcess;
 import com.junfly.water.service.spider.PybbsTopicService;
-import com.junfly.water.service.spider.SpiderHisService;
 import com.junfly.water.service.spider.SpiderProcessService;
-import com.junfly.water.service.spider.SpiderSourceService;
-import com.junfly.water.spider.ArticlesByAppSpider;
-import com.junfly.water.utils.R;
-import com.junfly.water.utils.annotation.IgnoreAuth;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -31,21 +27,14 @@ import static com.junfly.water.utils.ImageUtil.writeImageToDisk;
 /**
  * @Author: pq
  * @Description:
- * @Date: 2017/10/17 23:42
+ * @Date: 2017/10/18 22:43
  */
-@RestController
-@RequestMapping("/admin_api/spider")
-@Api("爬虫")
-public class SpiderRest {
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = SampleActiveMQApplication.class)
+public class ImageUtilSpec {
 
     @Autowired
     private PybbsTopicService pybbsTopicService;
-
-    @Autowired
-    private SpiderHisService spiderHisService;
-
-    @Autowired
-    private SpiderSourceService spiderSourceService;
 
     @Autowired
     private SpiderProcessService spiderProcessService;
@@ -56,47 +45,21 @@ public class SpiderRest {
     @Value("${image.staticPath}")
     private String staticPath;
 
-    /**
-     * 爬取微信公众号
-     */
-    @GetMapping("/spiderByNick")
-    @ApiOperation("爬取微信公众号")
-    @IgnoreAuth
-    public R spiderByNick() {
-        List<SpiderSource> spiderSources = spiderSourceService.queryList(new HashMap<String, Object>());
-        for (SpiderSource spiderSource : spiderSources) {
-            ArticlesByAppSpider sp = new ArticlesByAppSpider();
-            List<Article> articles = sp.crawlArticles(spiderSource);
-            for (Article article : articles) {
-                List<SpiderHis> spiderHis = spiderHisService.queryByTitle(article.getTitle());
-                if (spiderHis == null || spiderHis.isEmpty()) {
-                    article = sp.processArticleDetail(article);
-                    PybbsTopic pybbsTopic = new PybbsTopic();
-                    pybbsTopic.setContent(article.getContent());
-                    pybbsTopic.setTitle(article.getTitle());
-                    pybbsTopic.setInTime(new Date());
-                    pybbsTopic.setGood(0);
-                    pybbsTopic.setLabelId("2,");
-                    pybbsTopic.setModifyTime(new Date());
-                    pybbsTopic.setLastReplyTime(null);
-                    pybbsTopic.setTab("分享");
-                    pybbsTopic.setReplyCount(0);
-                    pybbsTopic.setTop(0);
-                    pybbsTopic.setTopicLock(0);
-                    pybbsTopic.setUpIds("");
-                    pybbsTopic.setUserId(1);
-                    pybbsTopic.setView(0);
-                    pybbsTopicService.saveWithHistory(pybbsTopic);
-                }
-            }
+    @Test
+    public void getImageByHttpUrl() {
+        String url = "http://mmbiz.qpic.cn/mmbiz_gif/z7kZjMoQ3yGWNJeZSz6gd21t9ANmS74YgKyuVc9F4Y3ASQDhIjROz3CXavVgsFZZ0icpXC2ayEEZIHFo2PZXHyA/0?wx_fmt=gif";
+        byte[] btImg = getImageFromNetByUrl(url);
+        if (null != btImg && btImg.length > 0) {
+            System.out.println("读取到：" + btImg.length + " 字节");
+            String fileName = "百度.gif";
+            writeImageToDisk(btImg, fileName);
+        } else {
+            System.out.println("没有从该连接获得内容");
         }
-        return R.ok("调用成功");
     }
 
-    @GetMapping("/imageContentProcess")
-    @ApiOperation("内容图片处理")
-    @IgnoreAuth
-    public R imageContentProcess() {
+    @Test
+    public void replaceImagePath() {
         Map<String, Object> map = new HashMap<>();
         map.put("imageProcess", "1");
         List<SpiderProcess> spiderProcesss = spiderProcessService.queryList(map);
@@ -134,6 +97,5 @@ public class SpiderRest {
             pybbsTopic.setContent(document.toString());
             pybbsTopicService.update(pybbsTopic);
         }
-        return R.ok("调用成功");
     }
 }

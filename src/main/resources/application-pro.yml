@@ -37,7 +37,8 @@ debug:
     flag: false
 
 image:
-  filePath: /home/java/static-tomcat-6.0.37/webapps/ROOT/zhhb/
+  filePath: /usr/share/nginx/html/images/wechat/
+  staticPath: http://120.78.132.250/images/wechat/
 
 wx:
     indexUrl: http://zhhb.junfly.cn/zhhb/#/Wxhb/

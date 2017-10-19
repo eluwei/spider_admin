@@ -1,4 +1,4 @@
-package com.junfly.water.adminapi.spider;
+package com.junfly.water.job;
 
 import com.junfly.water.entity.spider.*;
 import com.junfly.water.service.spider.PybbsTopicService;
@@ -7,18 +7,17 @@ import com.junfly.water.service.spider.SpiderProcessService;
 import com.junfly.water.service.spider.SpiderSourceService;
 import com.junfly.water.spider.ArticlesByAppSpider;
 import com.junfly.water.utils.R;
-import com.junfly.water.utils.annotation.IgnoreAuth;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -31,21 +30,16 @@ import static com.junfly.water.utils.ImageUtil.writeImageToDisk;
 /**
  * @Author: pq
  * @Description:
- * @Date: 2017/10/17 23:42
+ * @Date: 2017/10/18 21:43
  */
-@RestController
-@RequestMapping("/admin_api/spider")
-@Api("爬虫")
-public class SpiderRest {
+@Component
+@EnableScheduling
+public class ImageProcessJob {
+
+    private Logger logger = LoggerFactory.getLogger(ImageProcessJob.class);
 
     @Autowired
     private PybbsTopicService pybbsTopicService;
-
-    @Autowired
-    private SpiderHisService spiderHisService;
-
-    @Autowired
-    private SpiderSourceService spiderSourceService;
 
     @Autowired
     private SpiderProcessService spiderProcessService;
@@ -56,47 +50,8 @@ public class SpiderRest {
     @Value("${image.staticPath}")
     private String staticPath;
 
-    /**
-     * 爬取微信公众号
-     */
-    @GetMapping("/spiderByNick")
-    @ApiOperation("爬取微信公众号")
-    @IgnoreAuth
-    public R spiderByNick() {
-        List<SpiderSource> spiderSources = spiderSourceService.queryList(new HashMap<String, Object>());
-        for (SpiderSource spiderSource : spiderSources) {
-            ArticlesByAppSpider sp = new ArticlesByAppSpider();
-            List<Article> articles = sp.crawlArticles(spiderSource);
-            for (Article article : articles) {
-                List<SpiderHis> spiderHis = spiderHisService.queryByTitle(article.getTitle());
-                if (spiderHis == null || spiderHis.isEmpty()) {
-                    article = sp.processArticleDetail(article);
-                    PybbsTopic pybbsTopic = new PybbsTopic();
-                    pybbsTopic.setContent(article.getContent());
-                    pybbsTopic.setTitle(article.getTitle());
-                    pybbsTopic.setInTime(new Date());
-                    pybbsTopic.setGood(0);
-                    pybbsTopic.setLabelId("2,");
-                    pybbsTopic.setModifyTime(new Date());
-                    pybbsTopic.setLastReplyTime(null);
-                    pybbsTopic.setTab("分享");
-                    pybbsTopic.setReplyCount(0);
-                    pybbsTopic.setTop(0);
-                    pybbsTopic.setTopicLock(0);
-                    pybbsTopic.setUpIds("");
-                    pybbsTopic.setUserId(1);
-                    pybbsTopic.setView(0);
-                    pybbsTopicService.saveWithHistory(pybbsTopic);
-                }
-            }
-        }
-        return R.ok("调用成功");
-    }
-
-    @GetMapping("/imageContentProcess")
-    @ApiOperation("内容图片处理")
-    @IgnoreAuth
-    public R imageContentProcess() {
+    @Scheduled(cron = "0 25 11 * * ?") // 每天11点25分执行一次
+    public void task() {
         Map<String, Object> map = new HashMap<>();
         map.put("imageProcess", "1");
         List<SpiderProcess> spiderProcesss = spiderProcessService.queryList(map);
@@ -134,6 +89,5 @@ public class SpiderRest {
             pybbsTopic.setContent(document.toString());
             pybbsTopicService.update(pybbsTopic);
         }
-        return R.ok("调用成功");
     }
 }

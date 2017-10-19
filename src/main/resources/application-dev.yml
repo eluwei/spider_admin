@@ -38,6 +38,7 @@ debug:
 
 image:
   filePath: E://test//
+  staticPath: http://120.78.132.250/images/wechat/
 
 wx:
     indexUrl: http://127.0.0.1:8080/#/Wxhb/
