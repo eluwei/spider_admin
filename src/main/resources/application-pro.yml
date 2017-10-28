@@ -38,7 +38,7 @@ debug:
 
 image:
   filePath: /usr/share/nginx/html/images/wechat/
-  staticPath: http://120.78.132.250/images/wechat/
+  staticPath: http://h5.xiaoguaibao.com/images/wechat/
 
 wx:
     indexUrl: http://zhhb.junfly.cn/zhhb/#/Wxhb/

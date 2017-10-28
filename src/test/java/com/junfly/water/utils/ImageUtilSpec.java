@@ -64,38 +64,45 @@ public class ImageUtilSpec {
         map.put("imageProcess", "1");
         List<SpiderProcess> spiderProcesss = spiderProcessService.queryList(map);
         if (spiderProcesss != null && !spiderProcesss.isEmpty()) {
-            SpiderProcess spiderProcess = spiderProcesss.get(0);
-            SpiderProcess updateProcess = new SpiderProcess();
-            updateProcess.setId(spiderProcess.getId());
-            updateProcess.setImageProcess("2");
-            spiderProcessService.update(updateProcess);
-            PybbsTopic pybbsTopic = pybbsTopicService.queryObject(spiderProcess.getId());
-            System.out.println("此次处理的ID是：" + pybbsTopic.getId());
-            String html = pybbsTopic.getContent();
-            Document document = Jsoup.parse(html);
-            Elements imgEles = document.select("img");  //选择器的形式
-            for (int i = 0; i < imgEles.size(); i++) {
-                Element imgEle = imgEles.get(i);
-                String sourcePath = imgEle.attr("data-src");
-                String[] sourcePathArray = sourcePath.split("\\?");
-                if (sourcePathArray != null && sourcePathArray.length > 1) {
-                    String imageType = sourcePathArray[1].replace("wx_fmt=", "");
-                    byte[] btImg = getImageFromNetByUrl(sourcePath);
-                    if (null != btImg && btImg.length > 0) {
-                        String fileName = new Date().getTime() + i + "." + imageType;
-                        writeImageToDisk(btImg, filePath + pybbsTopic.getId() + "/" + fileName);
-                        imgEle.attr("src", staticPath + pybbsTopic.getId() + "/" + fileName);
-                        imgEle.attr("data-src", "");
+            for (SpiderProcess spiderProcess : spiderProcesss) {
+                SpiderProcess updateProcess = new SpiderProcess();
+                updateProcess.setId(spiderProcess.getId());
+                updateProcess.setImageProcess("2");
+                spiderProcessService.update(updateProcess);
+                PybbsTopic pybbsTopic = pybbsTopicService.queryObject(spiderProcess.getId());
+                System.out.println("此次处理的ID是：" + pybbsTopic.getId());
+                String html = pybbsTopic.getContent();
+                Document document = Jsoup.parse(html);
+                Elements imgEles = document.select("img");  //选择器的形式
+                for (int i = 0; i < imgEles.size(); i++) {
+                    Element imgEle = imgEles.get(i);
+                    String sourcePath = imgEle.attr("data-src");
+                    String[] sourcePathArray = sourcePath.split("\\?");
+                    if (sourcePathArray != null && sourcePathArray.length > 1) {
+                        String imageType = sourcePathArray[1].replace("wx_fmt=", "");
+                        byte[] btImg = getImageFromNetByUrl(sourcePath);
+                        if (null != btImg && btImg.length > 0) {
+                            String fileName = new Date().getTime() + i + "." + imageType;
+                            writeImageToDisk(btImg, filePath + pybbsTopic.getId() + "/" + fileName);
+                            imgEle.attr("src", staticPath + pybbsTopic.getId() + "/" + fileName);
+                            imgEle.attr("data-src", "");
+                        }
                     }
                 }
-            }
-            updateProcess.setId(spiderProcess.getId());
-            updateProcess.setImageProcess("3");
-            spiderProcessService.update(updateProcess);
-            System.out.println(document.toString());
+                updateProcess.setId(spiderProcess.getId());
+                updateProcess.setImageProcess("3");
+                spiderProcessService.update(updateProcess);
+                System.out.println(document.toString());
 
-            pybbsTopic.setContent(document.toString());
-            pybbsTopicService.update(pybbsTopic);
+                pybbsTopic.setContent(document.toString());
+//            pybbsTopicService.update(pybbsTopic);
+
+                Map<String, String> param = new HashMap<>();
+                param.put("id", String.valueOf(pybbsTopic.getId()));
+                param.put("content", pybbsTopic.getContent());
+                param.put("token", "d20b9a5c-8693-41a6-8943-ddb2cb78eebd");
+                HttpUtil.sendPost("http://localhost:8083/api/topic/update", param);
+            }
         }
     }
 }
