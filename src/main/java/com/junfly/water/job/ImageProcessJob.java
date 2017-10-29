@@ -49,11 +49,11 @@ public class ImageProcessJob {
     private String staticPath;
 
     /**
-     * 1小时执行一次
+     * 30分钟执行一次
      */
-    @Scheduled(cron = "0 0 0/1 * * ?")
+    @Scheduled(cron = "0 0/30 * * * ?")
     public void task() {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
         map.put("imageProcess", "1");
         List<SpiderHis> spiderHisList = spiderHisService.queryList(map);
         if (spiderHisList != null && !spiderHisList.isEmpty()) {
@@ -91,7 +91,7 @@ public class ImageProcessJob {
                     String imageType = sourcePathArray[1].replace("wx_fmt=", "").replace(";", "");
                     byte[] btImg = getImageFromNetByUrl(converImage);
                     if (null != btImg && btImg.length > 0) {
-                        String fileName = new Date().getTime() + "_cover" + "." + imageType;
+                        String fileName = System.currentTimeMillis() + "_cover" + "." + imageType;
                         writeImageToDisk(btImg, filePath + pybbsTopic.getId() + "/" + fileName);
                         converImage = staticPath + pybbsTopic.getId() + "/" + fileName;
                     }
