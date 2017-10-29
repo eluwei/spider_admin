@@ -3,7 +3,6 @@ package com.junfly.water.job;
 import com.junfly.water.entity.spider.*;
 import com.junfly.water.service.spider.PybbsTopicService;
 import com.junfly.water.service.spider.SpiderHisService;
-import com.junfly.water.service.spider.SpiderProcessService;
 import com.junfly.water.service.spider.SpiderSourceService;
 import com.junfly.water.spider.ArticlesByAppSpider;
 import com.junfly.water.utils.R;
@@ -42,7 +41,7 @@ public class ImageProcessJob {
     private PybbsTopicService pybbsTopicService;
 
     @Autowired
-    private SpiderProcessService spiderProcessService;
+    private SpiderHisService spiderHisService;
 
     @Value("${image.filePath}")
     private String filePath;
@@ -54,14 +53,15 @@ public class ImageProcessJob {
     public void task() {
         Map<String, Object> map = new HashMap<>();
         map.put("imageProcess", "1");
-        List<SpiderProcess> spiderProcesss = spiderProcessService.queryList(map);
-        if (spiderProcesss != null && !spiderProcesss.isEmpty()) {
-            SpiderProcess spiderProcess = spiderProcesss.get(0);
-            SpiderProcess updateProcess = new SpiderProcess();
-            updateProcess.setId(spiderProcess.getId());
-            updateProcess.setImageProcess("2");
-            spiderProcessService.update(updateProcess);
-            PybbsTopic pybbsTopic = pybbsTopicService.queryObject(spiderProcess.getId());
+        List<SpiderHis> spiderHisList = spiderHisService.queryList(map);
+        if (spiderHisList != null && !spiderHisList.isEmpty()) {
+            SpiderHis spiderHis = spiderHisList.get(0);
+            SpiderHis updateHis = new SpiderHis();
+            updateHis.setId(spiderHis.getId());
+            updateHis.setImageProcess("2");
+            updateHis.setHisTitle(spiderHis.getHisTitle());
+            spiderHisService.update(updateHis);
+            PybbsTopic pybbsTopic = pybbsTopicService.queryObject(spiderHis.getId());
             System.out.println("此次处理的ID是：" + pybbsTopic.getId());
             String html = pybbsTopic.getContent();
             Document document = Jsoup.parse(html);
@@ -81,9 +81,10 @@ public class ImageProcessJob {
                     }
                 }
             }
-            updateProcess.setId(spiderProcess.getId());
-            updateProcess.setImageProcess("3");
-            spiderProcessService.update(updateProcess);
+            updateHis.setId(spiderHis.getId());
+            updateHis.setImageProcess("3");
+            updateHis.setHisTitle(spiderHis.getHisTitle());
+            spiderHisService.update(updateHis);
             System.out.println(document.toString());
 
             pybbsTopic.setContent(document.toString());

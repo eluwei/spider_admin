@@ -48,4 +48,8 @@ public class PybbsTopic implements Serializable {
 	private Integer view;
 	//
 	private Integer userId;
+
+	private String coverImage;
+
+	private int pass;
 }

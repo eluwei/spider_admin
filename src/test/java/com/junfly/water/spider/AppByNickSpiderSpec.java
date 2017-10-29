@@ -5,6 +5,7 @@ import com.junfly.water.entity.spider.*;
 import com.junfly.water.service.spider.PybbsTopicService;
 import com.junfly.water.service.spider.SpiderHisService;
 import com.junfly.water.service.spider.SpiderSourceService;
+import com.junfly.water.spider.helper.Browser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -63,15 +64,12 @@ public class AppByNickSpiderSpec {
                     pybbsTopic.setUpIds("");
                     pybbsTopic.setUserId(1);
                     pybbsTopic.setView(0);
+                    pybbsTopic.setPass(1);
+                    pybbsTopic.setCoverImage(article.getImglink().replace("background-image: url(", "").replace(")",""));
                     pybbsTopicService.saveWithHistory(pybbsTopic);
                 }
             }
         }
-    }
-
-    @Test
-    public void changeImageWitchContent() {
-        PybbsTopic pybbsTopic = pybbsTopicService.queryObject(37);
-
+        Browser.driver.quit();
     }
 }

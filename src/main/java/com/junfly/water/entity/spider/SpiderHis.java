@@ -22,4 +22,6 @@ public class SpiderHis implements Serializable {
 	private Integer id;
 	//
 	private String hisTitle;
+
+	private String imageProcess;
 }

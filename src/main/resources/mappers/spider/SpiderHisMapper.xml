@@ -6,20 +6,23 @@
     <resultMap type="com.junfly.water.entity.spider.SpiderHis" id="spiderHisMap">
         <result property="id" column="id"/>
         <result property="hisTitle" column="his_title"/>
+        <result property="imageProcess" column="image_process"/>
     </resultMap>
 
     <!-- 用于select查询公用抽取的列 -->
     <sql id="spiderHisSelect">
         <![CDATA[
             A.`id`,
-            A.`his_title`
+            A.`his_title`,
+            A.`image_process`
         ]]>
     </sql>
     <!-- 用于insert插入公用抽取的列 -->
     <sql id="spiderHisInsert">
         <![CDATA[
                 `id`,
-                `his_title`
+                `his_title`,
+                `image_process`
         ]]>
     </sql>
 
@@ -33,6 +36,11 @@
 
     <select id="queryList" resultMap="spiderHisMap">
         select <include refid="spiderHisSelect"/> from spider_his A
+        <where>
+            <if test="imageProcess != null and imageProcess != null">
+                image_process = #{imageProcess}
+            </if>
+        </where>
         <choose>
             <when test="sidx != null and sidx.trim() != ''">
                 order by A.${sidx} A.${order}
@@ -48,6 +56,11 @@
 
     <select id="queryTotal" resultType="int">
         select count(*) from spider_his
+        <where>
+            <if test="imageProcess != null and imageProcess != null">
+                image_process = #{imageProcess}
+            </if>
+        </where>
     </select>
 
     <insert id="save" parameterType="com.junfly.water.entity.spider.SpiderHis" >
@@ -58,14 +71,17 @@
         values
         (
             #{id},
-            #{hisTitle}
+            #{hisTitle},
+            #{imageProcess}
         )
     </insert>
 
     <update id="update" parameterType="com.junfly.water.entity.spider.SpiderHis">
         update spider_his
         <set>
-                <if test="hisTitle != null">`his_title` = #{hisTitle}
+                <if test="hisTitle != null">`his_title` = #{hisTitle},
+                </if>
+                <if test="imageProcess != null">`image_process` = #{imageProcess}
                 </if>
         </set>
         where id = #{id}

@@ -63,8 +63,10 @@ public class PybbsTopicServiceImpl implements PybbsTopicService {
 	public void saveWithHistory(PybbsTopic pybbsTopic) {
 		SpiderHis spiderHis = new SpiderHis();
 		spiderHis.setHisTitle(pybbsTopic.getTitle());
-		spiderHisMapper.save(spiderHis);
 		pybbsTopicMapper.save(pybbsTopic);
+		spiderHis.setId(pybbsTopic.getId());
+		spiderHis.setImageProcess("1");
+		spiderHisMapper.save(spiderHis);
 	}
 
 }
