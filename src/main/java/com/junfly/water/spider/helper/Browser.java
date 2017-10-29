@@ -145,7 +145,11 @@ public class Browser {
         }
     }
 
-    //根据标题切换窗口
+    /**
+     * 根据标题切换窗口
+     * @param windowTitle
+     * @return
+     */
     public static boolean switchToWindow(String windowTitle) {
         boolean flag = false;
         try {

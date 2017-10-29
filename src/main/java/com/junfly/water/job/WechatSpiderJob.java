@@ -75,5 +75,6 @@ public class WechatSpiderJob {
             }
         }
         Browser.driver.quit();
+        Browser.driver = null;
     }
 }
