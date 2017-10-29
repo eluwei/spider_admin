@@ -8,6 +8,7 @@ import com.junfly.water.service.spider.PybbsTopicService;
 import com.junfly.water.service.spider.SpiderHisService;
 import com.junfly.water.service.spider.SpiderSourceService;
 import com.junfly.water.spider.ArticlesByAppSpider;
+import com.junfly.water.spider.helper.Browser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +40,12 @@ public class WechatSpiderJob {
     @Autowired
     private SpiderSourceService spiderSourceService;
 
-    @Scheduled(cron = "0 25 11 * * ?") // 每天11点25分执行一次
+    /**
+     * 1小时执行一次
+     */
+    @Scheduled(cron = "0 0 0/1 * * ?")
     public void task() {
-        List<SpiderSource> spiderSources = spiderSourceService.queryList(new HashMap<String, Object>());
+        List<SpiderSource> spiderSources = spiderSourceService.queryList(new HashMap<String, Object>(16));
         for (SpiderSource spiderSource : spiderSources) {
             ArticlesByAppSpider sp = new ArticlesByAppSpider();
             List<Article> articles = sp.crawlArticles(spiderSource);
@@ -64,9 +68,12 @@ public class WechatSpiderJob {
                     pybbsTopic.setUpIds("");
                     pybbsTopic.setUserId(1);
                     pybbsTopic.setView(0);
+                    pybbsTopic.setPass(1);
+                    pybbsTopic.setCoverImage(article.getImglink().replace("background-image: url(", "").replace(")",""));
                     pybbsTopicService.saveWithHistory(pybbsTopic);
                 }
             }
         }
+        Browser.driver.quit();
     }
 }

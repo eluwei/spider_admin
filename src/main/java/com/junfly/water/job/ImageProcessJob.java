@@ -1,11 +1,10 @@
 package com.junfly.water.job;
 
-import com.junfly.water.entity.spider.*;
+import com.junfly.water.entity.spider.PybbsTopic;
+import com.junfly.water.entity.spider.SpiderHis;
 import com.junfly.water.service.spider.PybbsTopicService;
 import com.junfly.water.service.spider.SpiderHisService;
-import com.junfly.water.service.spider.SpiderSourceService;
-import com.junfly.water.spider.ArticlesByAppSpider;
-import com.junfly.water.utils.R;
+import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -49,46 +48,64 @@ public class ImageProcessJob {
     @Value("${image.staticPath}")
     private String staticPath;
 
-    @Scheduled(cron = "0 25 11 * * ?") // 每天11点25分执行一次
+    /**
+     * 1小时执行一次
+     */
+    @Scheduled(cron = "0 0 0/1 * * ?")
     public void task() {
         Map<String, Object> map = new HashMap<>();
         map.put("imageProcess", "1");
         List<SpiderHis> spiderHisList = spiderHisService.queryList(map);
         if (spiderHisList != null && !spiderHisList.isEmpty()) {
-            SpiderHis spiderHis = spiderHisList.get(0);
-            SpiderHis updateHis = new SpiderHis();
-            updateHis.setId(spiderHis.getId());
-            updateHis.setImageProcess("2");
-            updateHis.setHisTitle(spiderHis.getHisTitle());
-            spiderHisService.update(updateHis);
-            PybbsTopic pybbsTopic = pybbsTopicService.queryObject(spiderHis.getId());
-            System.out.println("此次处理的ID是：" + pybbsTopic.getId());
-            String html = pybbsTopic.getContent();
-            Document document = Jsoup.parse(html);
-            Elements imgEles = document.select("img");  //选择器的形式
-            for (int i = 0; i < imgEles.size(); i++) {
-                Element imgEle = imgEles.get(i);
-                String sourcePath = imgEle.attr("data-src");
-                String[] sourcePathArray = sourcePath.split("\\?");
-                if (sourcePathArray != null && sourcePathArray.length > 1) {
-                    String imageType = sourcePathArray[1].replace("wx_fmt=", "");
-                    byte[] btImg = getImageFromNetByUrl(sourcePath);
-                    if (null != btImg && btImg.length > 0) {
-                        String fileName = new Date().getTime() + i + "." + imageType;
-                        writeImageToDisk(btImg, filePath + pybbsTopic.getId() + "/" + fileName);
-                        imgEle.attr("src", staticPath + pybbsTopic.getId() + "/" + fileName);
-                        imgEle.attr("data-src", "");
+            for (SpiderHis spiderHis : spiderHisList) {
+                SpiderHis updateHis = new SpiderHis();
+                updateHis.setId(spiderHis.getId());
+                updateHis.setImageProcess("2");
+                updateHis.setHisTitle(spiderHis.getHisTitle());
+                spiderHisService.update(updateHis);
+                PybbsTopic pybbsTopic = pybbsTopicService.queryObject(spiderHis.getId());
+                logger.info("此次处理的ID是：" + pybbsTopic.getId());
+                String html = pybbsTopic.getContent();
+                Document document = Jsoup.parse(html);
+                Elements imgEles = document.select("img");  //选择器的形式
+                for (int i = 0; i < imgEles.size(); i++) {
+                    Element imgEle = imgEles.get(i);
+                    String sourcePath = imgEle.attr("data-src");
+                    String[] sourcePathArray = sourcePath.split("\\?");
+                    if (sourcePathArray != null && sourcePathArray.length > 1) {
+                        String imageType = sourcePathArray[1].replace("wx_fmt=", "");
+                        byte[] btImg = getImageFromNetByUrl(sourcePath);
+                        if (null != btImg && btImg.length > 0) {
+                            String fileName = new Date().getTime() + i + "." + imageType;
+                            writeImageToDisk(btImg, filePath + pybbsTopic.getId() + "/" + fileName);
+                            imgEle.attr("src", staticPath + pybbsTopic.getId() + "/" + fileName);
+                            imgEle.attr("data-src", "");
+                        }
                     }
                 }
-            }
-            updateHis.setId(spiderHis.getId());
-            updateHis.setImageProcess("3");
-            updateHis.setHisTitle(spiderHis.getHisTitle());
-            spiderHisService.update(updateHis);
-            System.out.println(document.toString());
 
-            pybbsTopic.setContent(document.toString());
-            pybbsTopicService.update(pybbsTopic);
+                String converImage = pybbsTopic.getCoverImage();
+                if (StringUtils.isNotEmpty(converImage)) {
+                    converImage = converImage.replace("background-image: url(", "");
+                    String[] sourcePathArray = converImage.split("\\?");
+                    String imageType = sourcePathArray[1].replace("wx_fmt=", "").replace(";", "");
+                    byte[] btImg = getImageFromNetByUrl(converImage);
+                    if (null != btImg && btImg.length > 0) {
+                        String fileName = new Date().getTime() + "_cover" + "." + imageType;
+                        writeImageToDisk(btImg, filePath + pybbsTopic.getId() + "/" + fileName);
+                        converImage = staticPath + pybbsTopic.getId() + "/" + fileName;
+                    }
+                    pybbsTopic.setCoverImage(converImage);
+                }
+
+                updateHis.setId(spiderHis.getId());
+                updateHis.setImageProcess("3");
+                updateHis.setHisTitle(spiderHis.getHisTitle());
+                spiderHisService.update(updateHis);
+
+                pybbsTopic.setContent(document.toString());
+                pybbsTopicService.update(pybbsTopic);
+            }
         }
     }
 }
