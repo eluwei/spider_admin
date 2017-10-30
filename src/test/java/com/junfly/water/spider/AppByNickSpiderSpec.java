@@ -57,16 +57,21 @@ public class AppByNickSpiderSpec {
                     pybbsTopic.setLabelId("2,");
                     pybbsTopic.setModifyTime(new Date());
                     pybbsTopic.setLastReplyTime(null);
-                    pybbsTopic.setTab("分享");
+                    pybbsTopic.setTab("精华");
                     pybbsTopic.setReplyCount(0);
                     pybbsTopic.setTop(0);
                     pybbsTopic.setTopicLock(0);
                     pybbsTopic.setUpIds("");
                     pybbsTopic.setUserId(1);
                     pybbsTopic.setView(0);
-                    pybbsTopic.setPass(1);
+                    pybbsTopic.setPass(0);
                     pybbsTopic.setCoverImage(article.getImglink().replace("background-image: url(", "").replace(")",""));
-                    pybbsTopicService.saveWithHistory(pybbsTopic);
+                    try {
+                        pybbsTopicService.saveWithHistory(pybbsTopic);
+                    } catch (Exception e) {
+                        logger.info(pybbsTopic.toString());
+                        logger.error(e.getMessage());
+                    }
                 }
             }
         }

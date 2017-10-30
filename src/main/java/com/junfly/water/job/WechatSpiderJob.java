@@ -43,7 +43,7 @@ public class WechatSpiderJob {
     /**
      * 1小时执行一次
      */
-    @Scheduled(cron = "0 0 0/1 * * ?")
+//    @Scheduled(cron = "0 0 0/1 * * ?")
     public void task() {
         List<SpiderSource> spiderSources = spiderSourceService.queryList(new HashMap<String, Object>(16));
         for (SpiderSource spiderSource : spiderSources) {
@@ -61,7 +61,7 @@ public class WechatSpiderJob {
                     pybbsTopic.setLabelId("2,");
                     pybbsTopic.setModifyTime(new Date());
                     pybbsTopic.setLastReplyTime(null);
-                    pybbsTopic.setTab("分享");
+                    pybbsTopic.setTab("精华");
                     pybbsTopic.setReplyCount(0);
                     pybbsTopic.setTop(0);
                     pybbsTopic.setTopicLock(0);

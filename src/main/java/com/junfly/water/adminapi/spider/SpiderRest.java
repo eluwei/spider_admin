@@ -5,6 +5,7 @@ import com.junfly.water.service.spider.PybbsTopicService;
 import com.junfly.water.service.spider.SpiderHisService;
 import com.junfly.water.service.spider.SpiderSourceService;
 import com.junfly.water.spider.ArticlesByAppSpider;
+import com.junfly.water.spider.helper.Browser;
 import com.junfly.water.utils.R;
 import com.junfly.water.utils.annotation.IgnoreAuth;
 import io.swagger.annotations.Api;
@@ -59,8 +60,9 @@ public class SpiderRest {
     @ApiOperation("爬取微信公众号")
     @IgnoreAuth
     public R spiderByNick() {
-        List<SpiderSource> spiderSources = spiderSourceService.queryList(new HashMap<String, Object>());
-        for (SpiderSource spiderSource : spiderSources) {
+        List<SpiderSource> spiderSources = spiderSourceService.queryList(new HashMap<String, Object>(16));
+//        for (SpiderSource spiderSource : spiderSources) {
+        SpiderSource spiderSource = spiderSources.get(6);
             ArticlesByAppSpider sp = new ArticlesByAppSpider();
             List<Article> articles = sp.crawlArticles(spiderSource);
             for (Article article : articles) {
@@ -82,10 +84,14 @@ public class SpiderRest {
                     pybbsTopic.setUpIds("");
                     pybbsTopic.setUserId(1);
                     pybbsTopic.setView(0);
+                    pybbsTopic.setPass(1);
+                    pybbsTopic.setCoverImage(article.getImglink().replace("background-image: url(", "").replace(")",""));
                     pybbsTopicService.saveWithHistory(pybbsTopic);
                 }
             }
-        }
+//        }
+        Browser.driver.quit();
+        Browser.driver = null;
         return R.ok("调用成功");
     }
 

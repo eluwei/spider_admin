@@ -58,10 +58,9 @@ public class ArticlesByAppSpider {
             logger.debug("公众号标题 " + driver.getTitle());
             Browser.closeOtherWindowByTitle(spiderSource.getName() + "的相关微信公众号");
             Util.sleepRandom();
-            List<WebElement> allElements = new ArrayList<WebElement>();
             //解析第一页文章的元素
             List<WebElement> firstPageElements = parseArticleElements();
-            allElements = firstPageElements;
+            List<WebElement> allElements = firstPageElements;
             logger.debug("本次抓取的所有文章元素数量:" + allElements.size());
             List allArticles = processArticles(allElements);
             return allArticles;
@@ -85,7 +84,7 @@ public class ArticlesByAppSpider {
             WebElement divElement = (WebElement) divEles.get(i);
             articlesWelemets.add(divElement);
         }
-        System.out.println("本页文章div数量" + articlesWelemets.size());
+        logger.info("本页文章div数量" + articlesWelemets.size());
         return articlesWelemets;
     }
 
