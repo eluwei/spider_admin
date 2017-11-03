@@ -24,4 +24,6 @@ public class SpiderHis implements Serializable {
 	private String hisTitle;
 
 	private String imageProcess;
+
+	private String channel;
 }

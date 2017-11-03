@@ -60,12 +60,13 @@ public class PybbsTopicServiceImpl implements PybbsTopicService {
 
 	@Override
 	@Transactional
-	public void saveWithHistory(PybbsTopic pybbsTopic) {
+	public void saveWithHistory(PybbsTopic pybbsTopic, String channel) {
 		SpiderHis spiderHis = new SpiderHis();
 		spiderHis.setHisTitle(pybbsTopic.getTitle());
 		pybbsTopicMapper.save(pybbsTopic);
 		spiderHis.setId(pybbsTopic.getId());
 		spiderHis.setImageProcess("1");
+		spiderHis.setChannel(channel);
 		spiderHisMapper.save(spiderHis);
 	}
 

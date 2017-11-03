@@ -54,7 +54,7 @@ public class AppByNickSpiderSpec {
                     pybbsTopic.setTitle(article.getTitle());
                     pybbsTopic.setInTime(new Date());
                     pybbsTopic.setGood(0);
-                    pybbsTopic.setLabelId("2,");
+                    pybbsTopic.setLabelId("");
                     pybbsTopic.setModifyTime(new Date());
                     pybbsTopic.setLastReplyTime(null);
                     pybbsTopic.setTab("精华");
@@ -67,7 +67,7 @@ public class AppByNickSpiderSpec {
                     pybbsTopic.setPass(0);
                     pybbsTopic.setCoverImage(article.getImglink().replace("background-image: url(", "").replace(")",""));
                     try {
-                        pybbsTopicService.saveWithHistory(pybbsTopic);
+                        pybbsTopicService.saveWithHistory(pybbsTopic, "1");
                     } catch (Exception e) {
                         logger.info(pybbsTopic.toString());
                         logger.error(e.getMessage());

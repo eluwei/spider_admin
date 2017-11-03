@@ -86,7 +86,7 @@ public class SpiderRest {
                     pybbsTopic.setView(0);
                     pybbsTopic.setPass(1);
                     pybbsTopic.setCoverImage(article.getImglink().replace("background-image: url(", "").replace(")",""));
-                    pybbsTopicService.saveWithHistory(pybbsTopic);
+                    pybbsTopicService.saveWithHistory(pybbsTopic, "1");
                 }
             }
 //        }

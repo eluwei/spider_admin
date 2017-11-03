@@ -2,6 +2,7 @@ package com.junfly.water.service.spider;
 
 
 import com.junfly.water.entity.spider.PybbsTopic;
+import com.junfly.water.entity.spider.SpiderHis;
 
 import java.util.List;
 import java.util.Map;
@@ -29,5 +30,5 @@ public interface PybbsTopicService {
 	
 	void deleteBatch(Integer[] ids);
 
-    void saveWithHistory(PybbsTopic pybbsTopic);
+    void saveWithHistory(PybbsTopic pybbsTopic, String channel);
 }

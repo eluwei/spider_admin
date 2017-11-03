@@ -96,12 +96,12 @@ public class Browser {
         desiredCapabilities.setCapability("phantomjs.page.settings.userAgent", "Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:50.0) Gecko/20100101 Firefox/50.0");
         desiredCapabilities.setCapability("phantomjs.page.customHeaders.User-Agent", "Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:50.0) Gecko/20100101 　　Firefox/50.0");
         if (os.contains("Windows")) {
-//            System.setProperty("webdriver.chrome.driver",
-//                    "C:\\project\\utfpro\\spider_admin\\webDriver\\chromedriver.exe");
-            System.setProperty("phantomjs.binary.path", "D:\\soft\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe");//设置PhantomJs访问路径
+            System.setProperty("webdriver.chrome.driver",
+                    "C:\\project\\utfpro\\spider_admin\\webDriver\\chromedriver.exe");
+//            System.setProperty("phantomjs.binary.path", "D:\\soft\\phantomjs-2.1.1-windows\\bin\\phantomjs.exe");//设置PhantomJs访问路径
             if (driver == null) {
-//                driver = new ChromeDriver();
-                driver = new PhantomJSDriver(desiredCapabilities);
+                driver = new ChromeDriver();
+//                driver = new PhantomJSDriver(desiredCapabilities);
             }
         } else {
             System.setProperty("phantomjs.binary.path", "/usr/local/phantomjs/bin/phantomjs");
