@@ -58,6 +58,9 @@ public class ImageProcessJob {
         List<SpiderHis> spiderHisList = spiderHisService.queryList(map);
         if (spiderHisList != null && !spiderHisList.isEmpty()) {
             for (SpiderHis spiderHis : spiderHisList) {
+                if (!"1".equals(spiderHis.getChannel())) {
+                    return;
+                }
                 SpiderHis updateHis = new SpiderHis();
                 updateHis.setId(spiderHis.getId());
                 updateHis.setImageProcess("2");
@@ -76,7 +79,7 @@ public class ImageProcessJob {
                         String imageType = sourcePathArray[1].replace("wx_fmt=", "");
                         byte[] btImg = getImageFromNetByUrl(sourcePath);
                         if (null != btImg && btImg.length > 0) {
-                            String fileName = new Date().getTime() + i + "." + imageType;
+                            String fileName = System.currentTimeMillis() + i + "." + imageType;
                             writeImageToDisk(btImg, filePath + pybbsTopic.getId() + "/" + fileName);
                             imgEle.attr("src", staticPath + pybbsTopic.getId() + "/" + fileName);
                             imgEle.attr("data-src", "");
