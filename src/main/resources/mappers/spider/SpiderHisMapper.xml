@@ -41,7 +41,10 @@
         select <include refid="spiderHisSelect"/> from spider_his A
         <where>
             <if test="imageProcess != null and imageProcess != null">
-                image_process = #{imageProcess}
+                and image_process = #{imageProcess}
+            </if>
+            <if test="hisTitle != null and hisTitle != null">
+                and his_title = #{hisTitle}
             </if>
         </where>
         <choose>
@@ -61,7 +64,10 @@
         select count(*) from spider_his
         <where>
             <if test="imageProcess != null and imageProcess != null">
-                image_process = #{imageProcess}
+                and image_process = #{imageProcess}
+            </if>
+            <if test="hisTitle != null and hisTitle != null">
+                and his_title = #{hisTitle}
             </if>
         </where>
     </select>

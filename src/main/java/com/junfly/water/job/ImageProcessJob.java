@@ -51,7 +51,7 @@ public class ImageProcessJob {
     /**
      * 30分钟执行一次
      */
-    @Scheduled(cron = "0 0/30 * * * ?")
+    @Scheduled(cron = "0 0/5 * * * ?")
     public void task() {
         Map<String, Object> map = new HashMap<>(16);
         map.put("imageProcess", "1");
@@ -92,6 +92,9 @@ public class ImageProcessJob {
                     converImage = converImage.replace("background-image: url(", "");
                     String[] sourcePathArray = converImage.split("\\?");
                     String imageType = sourcePathArray[1].replace("wx_fmt=", "").replace(";", "");
+                    if (StringUtils.isEmpty(imageType)) {
+                        imageType = "png";
+                    }
                     byte[] btImg = getImageFromNetByUrl(converImage);
                     if (null != btImg && btImg.length > 0) {
                         String fileName = System.currentTimeMillis() + "_cover" + "." + imageType;
