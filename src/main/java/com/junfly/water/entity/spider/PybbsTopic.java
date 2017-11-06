@@ -52,4 +52,6 @@ public class PybbsTopic implements Serializable {
 	private String coverImage;
 
 	private int pass;
+
+	private String channel;
 }

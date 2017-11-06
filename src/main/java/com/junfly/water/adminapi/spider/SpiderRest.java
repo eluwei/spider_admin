@@ -179,7 +179,11 @@ public class SpiderRest {
         pybbsTopic.setUserId(1);
         pybbsTopic.setView(0);
         pybbsTopic.setPass(0);
-        pybbsTopicService.saveWithHistory(pybbsTopic, "1");
+        String channel = "1";
+        if (StringUtils.isNotEmpty(pybbsTopic.getChannel())) {
+            channel = pybbsTopic.getChannel();
+        }
+        pybbsTopicService.saveWithHistory(pybbsTopic, channel);
         return R.ok().put("save_result", true);
     }
 
