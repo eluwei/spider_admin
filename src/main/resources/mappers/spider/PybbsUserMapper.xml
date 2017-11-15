@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.junfly.water.mapper.spider.PybbsUserMapper">
+
+    <!-- 可根据自己的需求，是否要使用 -->
+    <resultMap type="com.junfly.water.entity.spider.PybbsUser" id="pybbsUserMap">
+        <result property="id" column="id"/>
+        <result property="attempts" column="attempts"/>
+        <result property="attemptsTime" column="attempts_time"/>
+        <result property="avatar" column="avatar"/>
+        <result property="block" column="block"/>
+        <result property="email" column="email"/>
+        <result property="inTime" column="in_time"/>
+        <result property="password" column="password"/>
+        <result property="score" column="score"/>
+        <result property="signature" column="signature"/>
+        <result property="spaceSize" column="space_size"/>
+        <result property="token" column="token"/>
+        <result property="url" column="url"/>
+        <result property="username" column="username"/>
+        <result property="nickname" column="nickname"/>
+    </resultMap>
+
+    <!-- 用于select查询公用抽取的列 -->
+    <sql id="pybbsUserSelect">
+        <![CDATA[
+            A.`id`,
+            A.`attempts`,
+            A.`attempts_time`,
+            A.`avatar`,
+            A.`block`,
+            A.`email`,
+            A.`in_time`,
+            A.`password`,
+            A.`score`,
+            A.`signature`,
+            A.`space_size`,
+            A.`token`,
+            A.`url`,
+            A.`username`,
+            A.`nickname`
+        ]]>
+    </sql>
+    <!-- 用于insert插入公用抽取的列 -->
+    <sql id="pybbsUserInsert">
+        <![CDATA[
+                `attempts`,
+                `attempts_time`,
+                `avatar`,
+                `block`,
+                `email`,
+                `in_time`,
+                `password`,
+                `score`,
+                `signature`,
+                `space_size`,
+                `token`,
+                `url`,
+                `username`,
+                `nickname`
+        ]]>
+    </sql>
+
+    <select id="queryObject" resultMap="pybbsUserMap">
+        select <include refid="pybbsUserSelect"/> from pybbs_user A where A.id = #{value}
+    </select>
+
+    <select id="queryObjectByRand" resultMap="pybbsUserMap">
+        select <include refid="pybbsUserSelect"/> from pybbs_user A ORDER BY RAND() LIMIT 1
+    </select>
+
+    <select id="queryList" resultMap="pybbsUserMap">
+        select <include refid="pybbsUserSelect"/> from pybbs_user A
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by A.${sidx} A.${order}
+            </when>
+            <otherwise>
+                order by A.id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*) from pybbs_user
+    </select>
+
+    <insert id="save" parameterType="com.junfly.water.entity.spider.PybbsUser" 
+            useGeneratedKeys="true" keyProperty="id">
+        insert into pybbs_user
+        (
+        <include refid="pybbsUserInsert"/>
+        )
+        values
+        (
+            #{attempts},
+            #{attemptsTime},
+            #{avatar},
+            #{block},
+            #{email},
+            #{inTime},
+            #{password},
+            #{score},
+            #{signature},
+            #{spaceSize},
+            #{token},
+            #{url},
+            #{username},
+            #{nickname}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.junfly.water.entity.spider.PybbsUser">
+        update pybbs_user
+        <set>
+                <if test="attempts != null">`attempts` = #{attempts}, 
+                </if>
+                <if test="attemptsTime != null">`attempts_time` = #{attemptsTime}, 
+                </if>
+                <if test="avatar != null">`avatar` = #{avatar}, 
+                </if>
+                <if test="block != null">`block` = #{block}, 
+                </if>
+                <if test="email != null">`email` = #{email}, 
+                </if>
+                <if test="inTime != null">`in_time` = #{inTime}, 
+                </if>
+                <if test="password != null">`password` = #{password}, 
+                </if>
+                <if test="score != null">`score` = #{score}, 
+                </if>
+                <if test="signature != null">`signature` = #{signature}, 
+                </if>
+                <if test="spaceSize != null">`space_size` = #{spaceSize}, 
+                </if>
+                <if test="token != null">`token` = #{token}, 
+                </if>
+                <if test="url != null">`url` = #{url}, 
+                </if>
+                <if test="username != null">`username` = #{username}, 
+                </if>
+                <if test="nickname != null">`nickname` = #{nickname}
+                </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="delete">
+        delete from pybbs_user where id = #{value}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from pybbs_user where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+        #{id}
+        </foreach>
+    </delete>
+
+</mapper>

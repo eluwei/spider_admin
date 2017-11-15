@@ -1,9 +1,11 @@
 package com.junfly.water.adminapi.spider;
 
 import com.junfly.water.entity.spider.PybbsTopic;
+import com.junfly.water.entity.spider.PybbsUser;
 import com.junfly.water.entity.spider.SpiderHis;
 import com.junfly.water.entity.spider.SpiderSource;
 import com.junfly.water.service.spider.PybbsTopicService;
+import com.junfly.water.service.spider.PybbsUserService;
 import com.junfly.water.service.spider.SpiderHisService;
 import com.junfly.water.service.spider.SpiderSourceService;
 import com.junfly.water.utils.R;
@@ -39,6 +41,9 @@ public class SpiderRest {
 
     @Autowired
     private SpiderHisService spiderHisService;
+
+    @Autowired
+    private PybbsUserService pybbsUserService;
 
     @Value("${image.filePath}")
     private String filePath;
@@ -81,7 +86,12 @@ public class SpiderRest {
         pybbsTopic.setTop(0);
         pybbsTopic.setTopicLock(0);
         pybbsTopic.setUpIds("");
-        pybbsTopic.setUserId(1);
+        PybbsUser pybbsUser = pybbsUserService.queryObjectByRand();
+        if (pybbsUser != null) {
+            pybbsTopic.setUserId(pybbsUser.getId());
+        } else {
+            pybbsTopic.setUserId(1);
+        }
         pybbsTopic.setView(0);
         pybbsTopic.setPass(0);
         String channel = "1";
