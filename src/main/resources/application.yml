@@ -23,6 +23,9 @@ spring:
         cache: false
     freemarker:
         template-loader-path: classpath:/template/
+    mysql:
+        datasource:
+            initSQL: SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci
 
 # Mybatis配置
 mybatis:

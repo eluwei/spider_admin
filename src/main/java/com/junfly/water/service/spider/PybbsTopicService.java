@@ -31,4 +31,6 @@ public interface PybbsTopicService {
 	void deleteBatch(Integer[] ids);
 
     void saveWithHistory(PybbsTopic pybbsTopic, String channel);
+
+	void updateWithHistory(PybbsTopic pybbsTopic);
 }

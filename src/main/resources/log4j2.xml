@@ -6,11 +6,26 @@
                 <pattern>%d %p %C{1.} [%t] %m%n</pattern>
             </PatternLayout>
         </Console>
-        <File name="File" fileName="/home/xgb/spider/spider.log">
-            <PatternLayout>
-                <pattern>%d %p %C{1.} [%t] %m%n</pattern>
-            </PatternLayout>
-        </File>
+        <RollingFile name="TASK" fileName="/home/xgb/spider/spider_roll.log"
+                     filePattern="/home/xgb/spider/spider_roll_%d{yyyy-MM-dd}.log" >
+            <PatternLayout pattern="%d %-5p %m%n" />
+            <Policies>
+                <!-- 每1天更新一次，此处查阅网上和官方示例中，都是以小时出现，我测试是以天为单位。（官方文档中说明按item类型是否是小时，但没找到在哪里设置item类型）另有其他各类型策略，请参阅官方文档 -->
+                <!-- TimeBasedTriggeringPolicy需要和filePattern配套使用，由于filePattern配置的时间最小粒度是dd天，所以表示每一天新建一个文件保存日志。SizeBasedTriggeringPolicy表示当文件大小大于指定size时，生成新的文件保存日志。 -->
+                <TimeBasedTriggeringPolicy modulate="true"
+                                           interval="1" />
+                <!-- 此处为每个文件大小策略限制，使用它一般会在文件中filePattern采用%i模式 -->
+                <!-- <SizeBasedTriggeringPolicy size="128KB" /> -->
+            </Policies>
+            <!-- 最多备份30天以内的日志，此处为策略限制，Delete中可以按自己需要用正则表达式编写 -->
+            <!-- DefaultRolloverStrategy字段中加入max=“30”经测试是配合SizeBasedTriggeringPolicy限制%i的存在数量，并没有发现是网上流传的是最多保存多少个文件的限制，也或许是我写的有问题 -->
+            <DefaultRolloverStrategy>
+                <Delete basePath="/home/xgb/spider" maxDepth="1">
+                    <IfFileName glob="spider_roll*.log" />
+                    <IfLastModified age="15d" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
     </Appenders>
     <Loggers>
         <Logger name="org.apache.catalina.util.LifecycleBase" level="error" />
@@ -32,7 +47,7 @@
         <Logger name="java.sql.ResultSet" level="DEBUG"/>
         <Root level="DEBUG">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="File"/>
+            <AppenderRef ref="TASK" />
         </Root>
     </Loggers>
 </Configuration>

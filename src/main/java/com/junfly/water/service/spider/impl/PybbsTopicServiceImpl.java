@@ -2,6 +2,8 @@ package com.junfly.water.service.spider.impl;
 
 import com.junfly.water.entity.spider.SpiderHis;
 import com.junfly.water.mapper.spider.SpiderHisMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service("pybbsTopicService")
 public class PybbsTopicServiceImpl implements PybbsTopicService {
+
+	private static Logger logger = LoggerFactory.getLogger(PybbsTopicServiceImpl.class);
 	@Autowired
 	private PybbsTopicMapper pybbsTopicMapper;
 
@@ -61,13 +65,28 @@ public class PybbsTopicServiceImpl implements PybbsTopicService {
 	@Override
 	@Transactional
 	public void saveWithHistory(PybbsTopic pybbsTopic, String channel) {
+		try {
+			SpiderHis spiderHis = new SpiderHis();
+			spiderHis.setHisTitle(pybbsTopic.getTitle());
+			pybbsTopicMapper.save(pybbsTopic);
+			spiderHis.setId(pybbsTopic.getId());
+			spiderHis.setImageProcess("1");
+			spiderHis.setChannel(channel);
+			spiderHisMapper.save(spiderHis);
+		} catch (Exception e) {
+			logger.info("标题== " + pybbsTopic.getTitle());
+			logger.info("内容== " + pybbsTopic.getContent());
+		}
+	}
+
+	@Override
+	@Transactional
+	public void updateWithHistory(PybbsTopic pybbsTopic) {
 		SpiderHis spiderHis = new SpiderHis();
-		spiderHis.setHisTitle(pybbsTopic.getTitle());
-		pybbsTopicMapper.save(pybbsTopic);
+		pybbsTopicMapper.update(pybbsTopic);
 		spiderHis.setId(pybbsTopic.getId());
-		spiderHis.setImageProcess("1");
-		spiderHis.setChannel(channel);
-		spiderHisMapper.save(spiderHis);
+		spiderHis.setImageProcess("3");
+		spiderHisMapper.update(spiderHis);
 	}
 
 }

@@ -49,7 +49,7 @@ public class ImageProcessJob {
     private String staticPath;
 
     /**
-     * 30分钟执行一次
+     * 5分钟执行一次
      */
     @Scheduled(cron = "0 0/5 * * * ?")
     public void task() {
@@ -91,9 +91,9 @@ public class ImageProcessJob {
                 if (StringUtils.isNotEmpty(converImage)) {
                     converImage = converImage.replace("background-image: url(", "");
                     String[] sourcePathArray = converImage.split("\\?");
-                    String imageType = sourcePathArray[1].replace("wx_fmt=", "").replace(";", "");
-                    if (StringUtils.isEmpty(imageType)) {
-                        imageType = "png";
+                    String imageType = "png";
+                    if (sourcePathArray.length > 1) {
+                        imageType = sourcePathArray[1].replace("wx_fmt=", "").replace(";", "");
                     }
                     byte[] btImg = getImageFromNetByUrl(converImage);
                     if (null != btImg && btImg.length > 0) {
