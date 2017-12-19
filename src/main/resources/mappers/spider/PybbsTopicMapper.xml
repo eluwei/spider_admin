@@ -21,6 +21,7 @@
         <result property="userId" column="user_id"/>
         <result property="coverImage" column="cover_image"/>
         <result property="pass" column="pass"/>
+        <result property="subTitle" column="subtitle"/>
     </resultMap>
 
     <!-- 用于select查询公用抽取的列 -->
@@ -42,7 +43,8 @@
             A.`view`,
             A.`user_id`,
             A.`cover_image`,
-            A.`pass`
+            A.`pass`,
+            A.`subtitle`
         ]]>
     </sql>
     <!-- 用于insert插入公用抽取的列 -->
@@ -63,7 +65,8 @@
                 `view`,
                 `user_id`,
                 `cover_image`,
-                `pass`
+                `pass`,
+                `subtitle`
         ]]>
     </sql>
 
@@ -113,7 +116,8 @@
             #{view},
             #{userId},
             #{coverImage},
-            #{pass}
+            #{pass},
+            #{subTitle}
         )
     </insert>
 
@@ -148,7 +152,10 @@
                 </if>
                 <if test="userId != null">`user_id` = #{userId},
                 </if>
-                <if test="coverImage != null">`cover_image` = #{coverImage}
+                <if test="coverImage != null">`cover_image` = #{coverImage},
+                </if>
+                <if test="subTitle != null">
+                    `subtitle` = #{subTitle}
                 </if>
         </set>
         where id = #{id}

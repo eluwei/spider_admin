@@ -54,4 +54,6 @@ public class PybbsTopic implements Serializable {
 	private int pass;
 
 	private String channel;
+
+	private String subTitle;
 }

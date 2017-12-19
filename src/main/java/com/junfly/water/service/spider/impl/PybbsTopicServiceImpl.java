@@ -74,6 +74,7 @@ public class PybbsTopicServiceImpl implements PybbsTopicService {
 			spiderHis.setChannel(channel);
 			spiderHisMapper.save(spiderHis);
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			logger.info("标题== " + pybbsTopic.getTitle());
 			logger.info("内容== " + pybbsTopic.getContent());
 		}
